@@ -1,0 +1,1377 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Analytics Dashboard | BOOMERANG Sales Team</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-bg: #0a0e1a;
+            --color-surface: #141826;
+            --color-surface-elevated: #1e2333;
+            --color-border: #2a3142;
+            --color-primary: #3b82f6;
+            --color-secondary: #8b5cf6;
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-danger: #ef4444;
+            --color-text-primary: #f8fafc;
+            --color-text-secondary: #94a3b8;
+            --color-text-muted: #64748b;
+            
+            --font-main: 'Inter', system-ui, -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
+            
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5);
+            --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.6);
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: var(--font-main);
+            background: var(--color-bg);
+            color: var(--color-text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(16, 185, 129, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+        
+        .container { max-width: 1600px; margin: 0 auto; padding: 2rem; position: relative; z-index: 1; }
+        
+        .header { margin-bottom: 3rem; text-align: center; }
+        
+        .header h1 {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.02em;
+        }
+        
+        .header p { color: var(--color-text-secondary); font-size: 1.125rem; }
+        
+        .meta-info {
+            display: flex;
+            gap: 2rem;
+            justify-content: center;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+        }
+        
+        .meta-item strong { color: var(--color-primary); }
+        
+        .nav-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding: 0.5rem;
+            background: var(--color-surface);
+            border-radius: 12px;
+            border: 1px solid var(--color-border);
+        }
+        
+        .nav-tab {
+            flex: 1;
+            padding: 0.75rem 1.5rem;
+            background: transparent;
+            color: var(--color-text-secondary);
+            border: none;
+            border-radius: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .nav-tab:hover {
+            background: var(--color-surface-elevated);
+            color: var(--color-text-primary);
+        }
+        
+        .nav-tab.active {
+            background: var(--color-primary);
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+        
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.3s; }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            box-shadow: var(--shadow-md);
+            transition: all 0.3s;
+        }
+        
+        .card:hover {
+            border-color: var(--color-primary);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-2px);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--color-border);
+        }
+        
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--color-text-primary);
+        }
+        
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .member-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s;
+        }
+        
+        .member-card:hover {
+            border-color: var(--color-primary);
+            transform: translateY(-4px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .member-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .member-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: white;
+        }
+        
+        .member-info h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .member-type {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .type-senior { background: var(--color-success); color: white; }
+        .type-closer { background: var(--color-primary); color: white; }
+        .type-qualifier { background: var(--color-secondary); color: white; }
+        .type-assistant { background: var(--color-warning); color: white; }
+        .type-rop { background: #6366f1; color: white; }
+        
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .metric {
+            text-align: center;
+            padding: 1rem;
+            background: var(--color-surface-elevated);
+            border-radius: 8px;
+        }
+        
+        .metric-label {
+            font-size: 0.75rem;
+            color: var(--color-text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.5rem;
+        }
+        
+        .metric-value {
+            font-size: 1.75rem;
+            font-weight: 700;
+            font-family: var(--font-mono);
+        }
+        
+        .metric-value.high { color: var(--color-success); }
+        .metric-value.medium { color: var(--color-primary); }
+        .metric-value.low { color: var(--color-warning); }
+        .metric-value.critical { color: var(--color-danger); }
+        
+        .progress-group { margin-bottom: 1.5rem; }
+        .progress-item { margin-bottom: 1rem; }
+        
+        .progress-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--color-text-secondary);
+        }
+        
+        .progress-bar-container {
+            height: 8px;
+            background: var(--color-surface-elevated);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--color-primary), var(--color-secondary));
+            border-radius: 4px;
+            transition: width 0.3s;
+        }
+        
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            display: flex;
+            gap: 0.75rem;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            margin-top: 1rem;
+        }
+        
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            color: var(--color-warning);
+        }
+        
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            color: var(--color-danger);
+        }
+        
+        .alert-success {
+            background: rgba(16, 185, 129, 0.1);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: var(--color-success);
+        }
+        
+        .alert-info {
+            background: rgba(59, 130, 246, 0.1);
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            color: var(--color-primary);
+        }
+        
+        .alert-icon { font-size: 1.25rem; }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            font-family: var(--font-mono);
+            background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: var(--color-text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .insights-section {
+            background: var(--color-surface);
+            border: 1px solid var(--color-border);
+            border-radius: 16px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .insight-card {
+            background: var(--color-surface-elevated);
+            border-left: 4px solid var(--color-primary);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border-radius: 8px;
+        }
+        
+        .insight-card h3 {
+            color: var(--color-primary);
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .insight-card p {
+            color: var(--color-text-secondary);
+            line-height: 1.7;
+        }
+        
+        .insight-card ul {
+            margin-top: 1rem;
+            margin-left: 1.5rem;
+            color: var(--color-text-secondary);
+        }
+        
+        .insight-card ul li { margin-bottom: 0.5rem; }
+        
+        .test-result {
+            background: var(--color-surface-elevated);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .test-score {
+            display: inline-block;
+            font-size: 2.5rem;
+            font-weight: 800;
+            font-family: var(--font-mono);
+            margin-bottom: 1rem;
+        }
+        
+        .test-score.acceptable { color: var(--color-primary); }
+        .test-score.low { color: var(--color-warning); }
+        .test-score.critical { color: var(--color-danger); }
+        
+        .badge {
+            display: inline-block;
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            margin-right: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .badge-success { background: var(--color-success); color: white; }
+        .badge-warning { background: var(--color-warning); color: white; }
+        .badge-danger { background: var(--color-danger); color: white; }
+        .badge-info { background: var(--color-primary); color: white; }
+        
+        .strength-item {
+            background: rgba(16, 185, 129, 0.1);
+            border-left: 4px solid var(--color-success);
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border-radius: 6px;
+            color: var(--color-success);
+        }
+        
+        .warning-item {
+            background: rgba(245, 158, 11, 0.1);
+            border-left: 4px solid var(--color-warning);
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border-radius: 6px;
+            color: var(--color-warning);
+        }
+        
+        .critical-item {
+            background: rgba(239, 68, 68, 0.1);
+            border-left: 4px solid var(--color-danger);
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border-radius: 6px;
+            color: var(--color-danger);
+        }
+        
+        .test-details {
+            background: var(--color-surface);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-size: 0.85rem;
+        }
+        
+        .test-details-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 0.75rem;
+        }
+        
+        .test-detail-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem;
+            background: var(--color-surface-elevated);
+            border-radius: 4px;
+        }
+        
+        .recommendations {
+            background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(245, 158, 11, 0.1));
+            border: 2px solid var(--color-danger);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .recommendations h3 {
+            color: var(--color-danger);
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .recommendation-item {
+            background: var(--color-surface);
+            border-left: 4px solid var(--color-primary);
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+        }
+        
+        .recommendation-item strong { color: var(--color-primary); }
+        
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .header h1 { font-size: 2rem; }
+            .team-grid, .stats-grid { grid-template-columns: 1fr; }
+            .nav-tabs { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 HR Analytics Dashboard</h1>
+            <p>Аналитика команды продаж BOOMERANG Real Estate</p>
+            <div class="meta-info">
+                <div class="meta-item">
+                    <strong>Проект:</strong> <span>Агентство недвижимости (Пхукет)</span>
+                </div>
+                <div class="meta-item">
+                    <strong>Период:</strong> <span>Май 2026</span>
+                </div>
+                <div class="meta-item">
+                    <strong>Для:</strong> <span>CEO / Собственники</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('overview')">📊 Обзор команды</button>
+            <button class="nav-tab" onclick="showTab('testing')">🧪 Детальные результаты тестов</button>
+            <button class="nav-tab" onclick="showTab('insights')">💡 Инсайты по каждому</button>
+            <button class="nav-tab" onclick="showTab('point-a')">📍 Точка А</button>
+            <button class="nav-tab" onclick="showTab('actions')">⚡ План действий</button>
+        </div>
+
+        <!-- Overview Tab -->
+        <div id="overview" class="tab-content active">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">4</div>
+                    <div class="stat-label">Размер команды</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">7.3</div>
+                    <div class="stat-label">Средняя удовлетворенность</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">10</div>
+                    <div class="stat-label">Прозрачность системы</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">7.8</div>
+                    <div class="stat-label">Мотивация</div>
+                </div>
+            </div>
+
+            <div class="team-grid" id="teamGrid"></div>
+        </div>
+
+        <!-- Testing Tab -->
+        <div id="testing" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">🧪 Детальные результаты психометрического тестирования</div>
+                </div>
+
+                <!-- Анастасия -->
+                <div class="test-result">
+                    <h3 style="color: var(--color-text-primary); margin-bottom: 1rem;">Анастасия Михайлова | Qualifier / Sales Support</h3>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: inline-block; margin-right: 2rem;">
+                            <span class="test-score acceptable">65</span>
+                            <span class="badge badge-info">DAA: Приемлемый</span>
+                        </div>
+                    </div>
+
+                    <h4 style="color: var(--color-success); margin-top: 1.5rem; margin-bottom: 1rem;">✓ Сильные стороны (зеленым)</h4>
+                    <div class="strength-item">
+                        <strong>Энергия:</strong> 65 — наличие ресурса для активной работы
+                    </div>
+                    <div class="strength-item">
+                        <strong>Взаимопонимание:</strong> 40 — способность к эмпатии и заботе
+                    </div>
+                    <div class="strength-item">
+                        <strong>Стремление к росту:</strong> 55 — осознание необходимости развития
+                    </div>
+                    <div class="strength-item">
+                        <strong>Воспроизведение коммуникаций:</strong> Удовлетворительное понимание инструкций и директив
+                    </div>
+
+                    <h4 style="color: var(--color-warning); margin-top: 1.5rem; margin-bottom: 1rem;">⚠️ Что надо фиксить (желтым)</h4>
+                    <div class="warning-item">
+                        <strong>Знание рынка:</strong> Требует развития и накопления опыта
+                    </div>
+                    <div class="warning-item">
+                        <strong>Знание продукта:</strong> Снижает убедительность в диалоге с клиентами
+                    </div>
+                    <div class="warning-item">
+                        <strong>Общение:</strong> Сдержанность ограничивает глубину взаимодействий
+                    </div>
+
+                    <h4 style="color: var(--color-danger); margin-top: 1.5rem; margin-bottom: 1rem;">🚨 Критично (красным)</h4>
+                    <div class="critical-item">
+                        <strong>Настойчивость:</strong> Очень низкая — трудности с концентрацией и доведением сложных сделок
+                    </div>
+                    <div class="critical-item">
+                        <strong>Самообладание:</strong> Крайне низкое — высокий уровень внутреннего напряжения
+                    </div>
+                    <div class="critical-item">
+                        <strong>Целеустремленность:</strong> Очень низкая — избегание сложных клиентов
+                    </div>
+                    <div class="critical-item">
+                        <strong>Навыки закрытия:</strong> Слабая зона — финальные этапы сделки наиболее уязвимы
+                    </div>
+
+                    <div class="test-details">
+                        <strong>📊 Детали теста DAA:</strong>
+                        <div class="test-details-grid">
+                            <div class="test-detail-item">
+                                <span>Время выполнения:</span>
+                                <span style="color: var(--color-primary);">5:38 мин</span>
+                            </div>
+                            <div class="test-detail-item">
+                                <span>Штрафные баллы:</span>
+                                <span style="color: var(--color-warning);">18 баллов</span>
+                            </div>
+                            <div class="test-detail-item">
+                                <span>Штраф за время:</span>
+                                <span style="color: var(--color-warning);">17 баллов</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning" style="margin-top: 1rem;">
+                        <span class="alert-icon">⚠️</span>
+                        <div>
+                            <strong>Профиль нестабилен:</strong> Низкая уверенность в сочетании с крайне низкими Настойчивостью и Самообладанием создаёт дестабилизированный профиль. Требуется поддерживающая среда и чёткие, структурированные задачи.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Екатерина -->
+                <div class="test-result">
+                    <h3 style="color: var(--color-text-primary); margin-bottom: 1rem;">Екатерина Салтан | Assistant / Resales / Sales</h3>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: inline-block; margin-right: 2rem;">
+                            <span class="test-score low">48</span>
+                            <span class="badge badge-warning">DAA: Низкий</span>
+                        </div>
+                    </div>
+
+                    <h4 style="color: var(--color-success); margin-top: 1.5rem; margin-bottom: 1rem;">✓ Сильные стороны (зеленым)</h4>
+                    <div class="strength-item">
+                        <strong>Предсказуемость: 90</strong> — стабильный, надежный стиль, рациональные решения
+                    </div>
+                    <div class="strength-item">
+                        <strong>Энергия: 90, Энтузиазм: 90</strong> — мощный драйв и работоспособность
+                    </div>
+                    <div class="strength-item">
+                        <strong>Целеустремленность: 80</strong> — ориентация на результат
+                    </div>
+                    <div class="strength-item">
+                        <strong>Уверенность в себе: 85</strong> — уверенно отстаивает позицию
+                    </div>
+                    <div class="strength-item">
+                        <strong>Знание продукта: 85, Знание рынка: 75</strong> — компетентный консультант
+                    </div>
+                    <div class="strength-item">
+                        <strong>Объективность: 80</strong> — готовность брать ответственность за результат
+                    </div>
+                    <div class="strength-item">
+                        <strong>Клиентоориентированность: 85</strong> — качественная работа с потребностями
+                    </div>
+
+                    <h4 style="color: var(--color-warning); margin-top: 1.5rem; margin-bottom: 1rem;">⚠️ Что надо фиксить (желтым)</h4>
+                    <div class="warning-item">
+                        <strong>Общение: 35</strong> — ограничивает установление раппорта и выявление потребностей
+                    </div>
+                    <div class="warning-item">
+                        <strong>Взаимопонимание: 30</strong> — создает ощущение холодности и дистанции
+                    </div>
+                    <div class="warning-item">
+                        <strong>Продуктивность: 55</strong> — при высокой энергии говорит о не выстроенной приоритизации
+                    </div>
+                    <div class="warning-item">
+                        <strong>Прохождение теста:</strong> Был пройден в 12 ночи — фокус был снижен (объективная причина)
+                    </div>
+
+                    <h4 style="color: var(--color-danger); margin-top: 1.5rem; margin-bottom: 1rem;">🚨 Критично (красным)</h4>
+                    <div class="critical-item">
+                        <strong>Парадокс напористости:</strong> Высокая Уверенность (85) + Целеустремленность (80) при низком Общении (35) → может восприниматься клиентами как излишняя напористость и эмоциональная дистанция
+                    </div>
+                    <div class="critical-item">
+                        <strong>DAA тест: 48 баллов</strong> — ниже минимального порога (60)
+                    </div>
+                    <div class="critical-item">
+                        <strong>Выполнение планов:</strong> Могут быть трудности с точным выполнением
+                    </div>
+                    <div class="critical-item">
+                        <strong>Риск ухода:</strong> Может уйти, если не будет перспектив развития (2+ года стажа)
+                    </div>
+
+                    <div class="test-details">
+                        <strong>📊 Детали теста DAA:</strong>
+                        <div class="test-details-grid">
+                            <div class="test-detail-item">
+                                <span>Время выполнения:</span>
+                                <span style="color: var(--color-primary);">6:04 мин</span>
+                            </div>
+                            <div class="test-detail-item">
+                                <span>Штрафные баллы:</span>
+                                <span style="color: var(--color-danger);">34 балла</span>
+                            </div>
+                            <div class="test-detail-item">
+                                <span>Штраф за время:</span>
+                                <span style="color: var(--color-warning);">18 баллов</span>
+                            </div>
+                            <div class="test-detail-item">
+                                <span>Условия прохождения:</span>
+                                <span style="color: var(--color-danger);">12 ночи!</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning" style="margin-top: 1rem;">
+                        <span class="alert-icon">💡</span>
+                        <div>
+                            <strong>HR-оценка:</strong> Перспективный надежный специалист с сильной экспертностью. Сочетание очень высокой Уверенности (85) и Целеустремленности (80) с низкими Общением (35) и Взаимопониманием (30) требует целенаправленного развития коммуникативной гибкости для ускорения построения доверия. <br><br>
+                            <strong>⚡ Действие:</strong> Провести собеседование для создания индивидуального плана развития. Показать четкую траекторию роста. Тест прошла в неоптимальное время — результат не отражает полную картину.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Дмитрий -->
+                <div class="test-result">
+                    <h3 style="color: var(--color-text-primary); margin-bottom: 1rem;">Дмитрий Максимов | Партнёрка / РОП</h3>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: inline-block; margin-right: 2rem;">
+                            <span class="test-score critical">37</span>
+                            <span class="badge badge-danger">DAA: Очень низкий</span>
+                        </div>
+                    </div>
+
+                    <h4 style="color: var(--color-success); margin-top: 1.5rem; margin-bottom: 1rem;">✓ Сильные стороны (зеленым)</h4>
+                    <div class="strength-item">
+                        <strong>Взаимопонимание:</strong> 70 — выстраивает доверительные, теплые отношения
+                    </div>
+                    <div class="strength-item">
+                        <strong>Терпимость:</strong> 70 — снижает конфликты, повышает лояльность
+                    </div>
+                    <div class="strength-item">
+                        <strong>Энергия:</strong> 70 — активность и готовность быть в контакте
+                    </div>
+                    <div class="strength-item">
+                        <strong>Знание рынка:</strong> 85 — сильная экспертная база для аргументации
+                    </div>
+
+                    <h4 style="color: var(--color-warning); margin-top: 1.5rem; margin-bottom: 1rem;">⚠️ Что надо фиксить (желтым)</h4>
+                    <div class="warning-item">
+                        <strong>Общение:</strong> 65 — поддерживает контакт, но требует структурирования
+                    </div>
+                    <div class="warning-item">
+                        <strong>Целеустремленность:</strong> 65 — базовая платформа уверенности
+                    </div>
+                    <div class="warning-item">
+                        <strong>Лояльность клиентов:</strong> 40 — недостаточное послепродажное сопровождение
+                    </div>
+                    <div class="warning-item">
+                        <strong>Клиентоориентированность:</strong> 65 — фокус на разовых сделках
+                    </div>
+
+                    <h4 style="color: var(--color-danger); margin-top: 1.5rem; margin-bottom: 1rem;">🚨 Критично (красным)</h4>
+                    <div class="critical-item">
+                        <strong>DAA тест:</strong> 37 баллов — очень низкий результат (норма: 60+)
+                    </div>
+                    <div class="critical-item">
+                        <strong>Настойчивость:</strong> 15 — очень низкая, склонность «сдаваться»
+                    </div>
+                    <div class="critical-item">
+                        <strong>Самообладание:</strong> 30 — низкое, эмоциональные реакции
+                    </div>
+                    <div class="critical-item">
+                        <strong>Объективность:</strong> 20 — перевод фокуса на внешние причины
+                    </div>
+                    <div class="critical-item">
+                        <strong>Продуктивность:</strong> 35 — низкая, неудовлетворенность результатами
+                    </div>
+                    <div class="critical-item">
+                        <strong>Энтузиазм:</strong> 35 — низкий уровень
+                    </div>
+                    <div class="critical-item">
+                        <strong>Навыки закрытия:</strong> 35 — слабый контроль финального этапа
+                    </div>
+
+                    <div class="test-details">
+                        <strong>📊 Детали теста DAA:</strong>
+                        <div class="test-details-grid">
+                            <div class="test-detail-item">
+                                <span>Время выполнения:</span>
+                                <span style="color: var(--color-danger);">7:32 мин</span>
+                            </div>
+                            <div class="test-detail-item">
+                                <span>Штрафные баллы:</span>
+                                <span style="color: var(--color-danger);">40 баллов</span>
+                            </div>
+                            <div class="test-detail-item">
+                                <span>Штраф за время:</span>
+                                <span style="color: var(--color-danger);">23 балла</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-danger" style="margin-top: 1rem;">
+                        <span class="alert-icon">🚨</span>
+                        <div>
+                            <strong>Критические риски:</strong> Комбинация очень низкой Настойчивости (15), низкого Самообладания (30) и Объективности (20) создает риск нестабильных результатов под давлением и сложностей в удержании плана. Профиль больше похож на консультативного специалиста, чем на драйвера продаж. <br><br>
+                            <strong>⚡ Действие:</strong> Провести дополнительное собеседование для оценки. Возможно влияние временного стресса на результаты.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Анна -->
+                <div class="test-result">
+                    <h3 style="color: var(--color-text-primary); margin-bottom: 1rem;">Анна Шляпина | Senior Sales / Closer</h3>
+                    
+                    <div style="margin-bottom: 1.5rem;">
+                        <div style="display: inline-block; margin-right: 2rem;">
+                            <span class="test-score acceptable">74</span>
+                            <span class="badge badge-success">DAA: Хорошо</span>
+                        </div>
+                    </div>
+
+                    <h4 style="color: var(--color-success); margin-top: 1.5rem; margin-bottom: 1rem;">✓ Сильные стороны (зеленым)</h4>
+                    <div class="strength-item">
+                        <strong>Знание рынка: 85</strong> — высокий уровень, уверенная аргументация
+                    </div>
+                    <div class="strength-item">
+                        <strong>Знание продукта: 75</strong> — сильная экспертность
+                    </div>
+                    <div class="strength-item">
+                        <strong>Навыки закрытия: 85</strong> — умение доводить сделки до результата, работа с возражениями
+                    </div>
+                    <div class="strength-item">
+                        <strong>Объективность: 65</strong> — рациональный анализ, принятие ответственности
+                    </div>
+                    <div class="strength-item">
+                        <strong>Система взглядов: 65</strong> — уверенное убеждение в ценности продаж
+                    </div>
+                    <div class="strength-item">
+                        <strong>Клиентоориентированность: 65</strong> — потенциал для повышения качества сервиса
+                    </div>
+                    <div class="strength-item">
+                        <strong>Стремление к росту: 65</strong> — готовность к развитию
+                    </div>
+
+                    <h4 style="color: var(--color-warning); margin-top: 1.5rem; margin-bottom: 1rem;">⚠️ Что надо фиксить (желтым)</h4>
+                    <div class="warning-item">
+                        <strong>Предсказуемость: 50</strong> — нестабильность усилий под давлением
+                    </div>
+                    <div class="warning-item">
+                        <strong>Настойчивость: 55</strong> — снижение усилий при сопротивлении клиентов
+                    </div>
+                    <div class="warning-item">
+                        <strong>Целеустремленность: 50</strong> — возможное избегание сложных задач
+                    </div>
+                    <div class="warning-item">
+                        <strong>Продуктивность: 55</strong> — нестабильность результатов
+                    </div>
+                    <div class="warning-item">
+                        <strong>Лояльность клиентов: 50</strong> — ориентация на разовые сделки
+                    </div>
+                    <div class="warning-item">
+                        <strong>Привлечение новых клиентов: 55</strong> — отсутствие устойчивой клиентской базы
+                    </div>
+
+                    <h4 style="color: var(--color-danger); margin-top: 1.5rem; margin-bottom: 1rem;">🚨 Критично (красным)</h4>
+                    <div class="critical-item">
+                        <strong>Энтузиазм: 15</strong> — очень низкий уровень, пессимизм, подрыв мотивации
+                    </div>
+                    <div class="critical-item">
+                        <strong>Самообладание: 15</strong> — очень низкая устойчивость к неудачам, высокое внутреннее напряжение
+                    </div>
+                    <div class="critical-item">
+                        <strong>Общение: 30</strong> — холодный, формальный стиль взаимодействия
+                    </div>
+                    <div class="critical-item">
+                        <strong>Взаимопонимание: 15</strong> — низкое доверие, осложнение установления отношений
+                    </div>
+                    <div class="critical-item">
+                        <strong>Терпимость: 25</strong> — недостаточная для долгосрочных клиентских отношений
+                    </div>
+                    <div class="critical-item">
+                        <strong>Риск:</strong> Сочетание очень низких Самообладания (15) и Энтузиазма (15) с низким Взаимопониманием (15) → конфликтные или холодные контакты с клиентами
+                    </div>
+
+                    <div class="test-details">
+                        <strong>📊 Детали теста:</strong>
+                        <div class="test-details-grid">
+                            <div class="test-detail-item">
+                                <span>DAA:</span>
+                                <span style="color: var(--color-success);">74/100</span>
+                            </div>
+                            <div class="test-detail-item">
+                                <span>Время выполнения:</span>
+                                <span style="color: var(--color-success);">4:08 мин</span>
+                            </div>
+                            <div class="test-detail-item">
+                                <span>Дата тестирования:</span>
+                                <span>3 мая 2026, 12:34</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning" style="margin-top: 1rem;">
+                        <span class="alert-icon">⚠️</span>
+                        <div>
+                            <strong>Оценка:</strong> Сильная профессиональная база (знания, навыки закрытия) при эмоционально сложном периоде. Очень низкие Энтузиазм и Самообладание снижают стабильность результатов. Низкое Взаимопонимание ограничивает доверительные отношения с клиентами. Требуется: укрепление эмоциональной устойчивости, развитие коммуникативности, системная работа с клиентской базой.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Insights Tab -->
+        <div id="insights" class="tab-content">
+            <div class="insights-section">
+                <h2 style="margin-bottom: 2rem; color: var(--color-text-primary);">💡 Краткая оценка команды</h2>
+
+                <div class="insight-card" style="border-left-color: var(--color-success);">
+                    <h3>👤 Анна — Senior Sales / Closer</h3>
+                    
+                    <p style="margin-bottom: 1rem;"><strong>Что сильно:</strong></p>
+                    <p style="color: var(--color-text-secondary); margin-bottom: 1rem;">
+                        Экспертность в продукте и рынке, навыки закрытия сделок, лояльность клиентов. Опыт работы 14+ лет, конверсия на предыдущем месте 9 из 10. Способность работать с интенсивным потоком клиентов.
+                    </p>
+
+                    <p style="margin-bottom: 1rem;"><strong>Что слабо:</strong></p>
+                    <p style="color: var(--color-text-secondary); margin-bottom: 1rem;">
+                        Избирательность к клиентам на основе субъективных критериев. Отсутствие дисциплины в CRM (ведение в личном блокноте). Нулевая конверсия с маркетинговых лидов. Работает параллельно с личными клиентами. Низкие показатели: энтузиазм, самообладание, общение, взаимопонимание, терпимость.
+                    </p>
+
+                    <p style="margin-bottom: 1rem;"><strong>Что нужно менять:</strong></p>
+                    <p style="color: var(--color-text-secondary); margin-bottom: 1rem;">
+                        Внедрить объективную систему скоринга лидов. Обеспечить дисциплину работы в CRM. Установить прозрачный трекинг всех клиентов и сделок. Создать долгосрочную мотивацию для привязки к компании.
+                    </p>
+
+                    <p style="margin-bottom: 1rem;"><strong>Дальнейшие шаги:</strong></p>
+                    <p style="color: var(--color-text-secondary);">
+                        Обучение по CRM и работе с воронкой продаж. Внедрение системы квалификации лидов. Контроль дисциплины заполнения CRM. Установление четких KPI по конверсии с маркетинговых лидов.
+                    </p>
+                </div>
+
+                <div class="insight-card" style="border-left-color: var(--color-primary);">
+                    <h3>👤 Анастасия Михайлова — Qualifier / Sales Support</h3>
+                    
+                    <p style="margin-bottom: 1rem;"><strong>Что сильно:</strong></p>
+                    <p style="color: var(--color-text-secondary); margin-bottom: 1rem;">
+                        Высокая мотивация и удовлетворенность работой (10/10). Работает с CRM и Google таблицами. Обрабатывает заявки по телефонии, находится в Европе. Энергия на уровне 65, взаимопонимание 40.
+                    </p>
+
+                    <p style="margin-bottom: 1rem;"><strong>Что слабо:</strong></p>
+                    <p style="color: var(--color-text-secondary); margin-bottom: 1rem;">
+                        Критически низкие показатели: настойчивость 15, самообладание 15, целеустремленность 15, навыки закрытия 20. Недостаточное знание рынка (35) и продукта (45). Нестабильный профиль с признаками перегрузки. Предсказуемость 25 — нестабильность поведения.
+                    </p>
+
+                    <p style="margin-bottom: 1rem;"><strong>Что нужно менять:</strong></p>
+                    <p style="color: var(--color-text-secondary); margin-bottom: 1rem;">
+                        Снизить уровень стресса в задачах — меньше сложных переговоров, больше простых предсказуемых взаимодействий. Создать четкую структуру работы с понятными приоритетами. Поэтапное развитие: стабилизация самообладания → усиление навыков.
+                    </p>
+
+                    <p style="margin-bottom: 1rem;"><strong>Дальнейшие шаги:</strong></p>
+                    <p style="color: var(--color-text-secondary);">
+                        Обучение по CRM и продажам по этапам воронки. Поддерживающая среда и регулярная обратная связь. Развитие знания продукта и рынка. Отработка навыков закрытия на простых сценариях с постепенным усложнением.
+                    </p>
+                </div>
+
+                <div class="insight-card" style="border-left-color: var(--color-warning);">
+                    <h3>👤 Екатерина Салтан — Assistant / Resales / Sales</h3>
+                    
+                    <p style="margin-bottom: 1rem;"><strong>Что сильно:</strong></p>
+                    <p style="color: var(--color-text-secondary); margin-bottom: 1rem;">
+                        Универсальность — делает всё (ассистент, resales, сейлз). Стаж 2+ года, знание всех процессов. Высокие показатели: предсказуемость 90, энергия 90, энтузиазм 90, целеустремленность 80, уверенность 85, знание продукта 85, знание рынка 75, объективность 80.
+                    </p>
+
+                    <p style="margin-bottom: 1rem;"><strong>Что слабо:</strong></p>
+                    <p style="color: var(--color-text-secondary); margin-bottom: 1rem;">
+                        Критически низкие коммуникативные навыки: общение 35, взаимопонимание 30. Создает ощущение холодности и дистанции на первом контакте. DAA тест 48 (пройден в 12 ночи). Продуктивность 55 при высокой энергии — не выстроена приоритизация.
+                    </p>
+
+                    <p style="margin-bottom: 1rem;"><strong>Что нужно менять:</strong></p>
+                    <p style="color: var(--color-text-secondary); margin-bottom: 1rem;">
+                        Развитие навыков открытого общения и установления раппорта. Усиление эмпатии и взаимопонимания в продажах. Оптимизация личной эффективности и приоритизации задач. Создание четкого плана развития с перспективами роста.
+                    </p>
+
+                    <p style="margin-bottom: 1rem;"><strong>Дальнейшие шаги:</strong></p>
+                    <p style="color: var(--color-text-secondary);">
+                        Собеседование для оценки реальных компетенций и создания индивидуального плана развития. Обучение по CRM и продажам по этапам воронки. Тренинг коммуникативных навыков. Определение роли после финального собеседования в среду. КРИТИЧНО: показать четкую траекторию роста для предотвращения риска ухода.
+                    </p>
+                </div>
+
+                <div class="insight-card" style="border-left-color: var(--color-danger);">
+                    <h3>👤 Дмитрий Максимов — Партнёрка / РОП</h3>
+                    
+                    <p style="margin-bottom: 1rem;"><strong>Что сильно:</strong></p>
+                    <p style="color: var(--color-text-secondary); margin-bottom: 1rem;">
+                        Высокое взаимопонимание (70) и терпимость (70) — выстраивает доверительные отношения. Энергия 70, общение 65. Знание рынка 85 — сильная экспертная база.
+                    </p>
+
+                    <p style="margin-bottom: 1rem;"><strong>Что слабо:</strong></p>
+                    <p style="color: var(--color-text-secondary); margin-bottom: 1rem;">
+                        Критические показатели: DAA 37 (норма 60+), настойчивость 15, самообладание 30, объективность 20, продуктивность 35, энтузиазм 35, навыки закрытия 35. Отсутствие влияния на команду. Нет статистики по партнерским лидам. Партнерка не дала ни одной сделки. Профиль консультанта, а не драйвера продаж.
+                    </p>
+
+                    <p style="margin-bottom: 1rem;"><strong>Что нужно менять:</strong></p>
+                    <p style="color: var(--color-text-secondary); margin-bottom: 1rem;">
+                        Определить соответствие роли РОПа. Оценить возможность перевода на позицию консультанта/эксперта по рынку с четкими KPI. При несоответствии — рассмотреть поиск внешнего РОПа. Если остается в команде — структурировать работу с воронкой продаж и усилить навыки закрытия.
+                    </p>
+
+                    <p style="margin-bottom: 1rem;"><strong>Дальнейшие шаги:</strong></p>
+                    <p style="color: var(--color-text-secondary);">
+                        Собеседование в среду 12:00-13:30 для оценки соответствия роли и определения дальнейшей позиции. Принятие решения: внешний РОП или развитие внутреннего кандидата. Обучение по CRM и продажам по этапам воронки (если остается). Определение роли после финального собеседования.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Point A Tab -->
+        <div id="point-a" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">📍 Точка А — Текущее состояние</div>
+                </div>
+
+                <div style="padding: 2rem;">
+                    <div style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.1), rgba(139, 92, 246, 0.1)); padding: 2rem; border: 2px solid var(--color-primary); border-radius: 12px;">
+                        <h3 style="color: var(--color-primary); font-size: 1.5rem; margin-bottom: 1.5rem;">За последний год</h3>
+                        
+                        <div style="background: var(--color-surface); padding: 1.5rem; border-radius: 8px;">
+                            <div style="color: var(--color-text-secondary); line-height: 1.8;">
+                                
+                                <div style="margin-bottom: 1.5rem;">
+                                    <div style="display: flex; align-items: start; margin-bottom: 0.75rem;">
+                                        <span style="color: var(--color-success); font-size: 1.2rem; margin-right: 0.75rem;">✓</span>
+                                        <div>
+                                            <strong style="color: var(--color-success);">17 сделок, закрытых через личный бренд Еленой</strong> — браво
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div style="border-top: 1px solid var(--color-border); padding-top: 1.5rem;">
+                                    <div style="display: flex; align-items: start; margin-bottom: 0.75rem;">
+                                        <span style="color: var(--color-danger); font-size: 1.2rem; margin-right: 0.75rem;">✗</span>
+                                        <div>
+                                            <strong style="color: var(--color-text-primary);">Результат по маркетингу:</strong> ноль, конверсия — 0
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="display: flex; align-items: start; margin-bottom: 0.75rem;">
+                                        <span style="color: var(--color-danger); font-size: 1.2rem; margin-right: 0.75rem;">✗</span>
+                                        <div>
+                                            <strong style="color: var(--color-text-primary);">Маркетинг:</strong> не запущен
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="display: flex; align-items: start; margin-bottom: 0.75rem;">
+                                        <span style="color: var(--color-danger); font-size: 1.2rem; margin-right: 0.75rem;">✗</span>
+                                        <div>
+                                            <strong style="color: var(--color-text-primary);">CRM система:</strong> не ведется, нет ролей и сформированных воронок квалификации и продаж
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="display: flex; align-items: start; margin-bottom: 0.75rem;">
+                                        <span style="color: var(--color-danger); font-size: 1.2rem; margin-right: 0.75rem;">✗</span>
+                                        <div>
+                                            <strong style="color: var(--color-text-primary);">Сотрудники:</strong> часть не понимают свою роль, часть не согласна с текущей
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="display: flex; align-items: start; margin-bottom: 0.75rem;">
+                                        <span style="color: var(--color-danger); font-size: 1.2rem; margin-right: 0.75rem;">✗</span>
+                                        <div>
+                                            <strong style="color: var(--color-text-primary);">Организационная структура:</strong> согласно функциональным ролям сотрудников — отсутствует
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="display: flex; align-items: start; margin-bottom: 0.75rem;">
+                                        <span style="color: var(--color-danger); font-size: 1.2rem; margin-right: 0.75rem;">✗</span>
+                                        <div>
+                                            <strong style="color: var(--color-text-primary);">Аналитика:</strong> отсутствует
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="display: flex; align-items: start; margin-bottom: 0.75rem;">
+                                        <span style="color: var(--color-danger); font-size: 1.2rem; margin-right: 0.75rem;">✗</span>
+                                        <div>
+                                            <strong style="color: var(--color-text-primary);">Партнёрское направление:</strong> не дает результатов/сделок, блок Димы
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="display: flex; align-items: start; margin-bottom: 0.75rem;">
+                                        <span style="color: var(--color-danger); font-size: 1.2rem; margin-right: 0.75rem;">✗</span>
+                                        <div>
+                                            <strong style="color: var(--color-text-primary);">Процессы контроля качества:</strong> отсутствует
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="display: flex; align-items: start; margin-bottom: 0.75rem;">
+                                        <span style="color: var(--color-warning); font-size: 1.2rem; margin-right: 0.75rem;">⚠</span>
+                                        <div>
+                                            <strong style="color: var(--color-text-primary);">Система мотивации:</strong> есть, но не нацелена на выполнение плана ежемесячно
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="display: flex; align-items: start; margin-bottom: 0.75rem;">
+                                        <span style="color: var(--color-danger); font-size: 1.2rem; margin-right: 0.75rem;">✗</span>
+                                        <div>
+                                            <strong style="color: var(--color-text-primary);">Процесс онбординга:</strong> для СНГ и ENG отсутствует
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="display: flex; align-items: start;">
+                                        <span style="color: var(--color-danger); font-size: 1.2rem; margin-right: 0.75rem;">✗</span>
+                                        <div>
+                                            <strong style="color: var(--color-text-primary);">Планирование:</strong> отсутствует
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions Tab -->
+        <div id="actions" class="tab-content">
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">План действий</div>
+                </div>
+
+                <div style="background: var(--color-surface-elevated); padding: 2rem; border-radius: 12px; margin-bottom: 2rem;">
+                    <h3 style="color: var(--color-primary); margin-bottom: 1.5rem;">📋 Приоритетный план действий</h3>
+                    
+                    <div class="recommendation-item">
+                        <strong>1. Собеседования с Екатериной и Дмитрием</strong>
+                        <ul style="margin-top: 0.5rem; margin-left: 1.5rem; color: var(--color-text-secondary);">
+                            <li><strong>Среда, 12:00-13:30:</strong> Провести структурированные интервью для оценки компетенций</li>
+                            <li><strong>Цель:</strong> Определить соответствие текущим ролям и потенциал развития</li>
+                            <li><strong>Финализация ролей:</strong> После собеседований в среду принять решения по позициям</li>
+                        </ul>
+                    </div>
+
+                    <div class="recommendation-item">
+                        <strong>2. Обучение команды Sales</strong>
+                        <ul style="margin-top: 0.5rem; margin-left: 1.5rem; color: var(--color-text-secondary);">
+                            <li>CRM: работа с системой, дисциплина заполнения</li>
+                            <li>Продажи по этапам воронки: квалификация, работа с возражениями, закрытие</li>
+                            <li>Скрипты и речевые модули для каждого этапа</li>
+                        </ul>
+                    </div>
+
+                    <div class="recommendation-item">
+                        <strong>3. Обучение квалификатора</strong>
+                        <ul style="margin-top: 0.5rem; margin-left: 1.5rem; color: var(--color-text-secondary);">
+                            <li>CRM: фиксация данных, передача лидов</li>
+                            <li>Продажи по этапам воронки: квалификация запросов, определение потенциала</li>
+                            <li>Критерии scoring лидов</li>
+                        </ul>
+                    </div>
+
+                    <div class="recommendation-item">
+                        <strong>4. Определить стратегию найма</strong>
+                        <ul style="margin-top: 0.5rem; margin-left: 1.5rem; color: var(--color-text-secondary);">
+                            <li><strong>Вариант А:</strong> Сильные кандидаты с рынка — быстрый старт, высокая стоимость</li>
+                            <li><strong>Вариант Б:</strong> Средние кандидаты с периодом обучения — инвестиция в развитие, долгосрочная лояльность</li>
+                            <li><strong>Решение:</strong> Определить баланс между скоростью закрытия позиций и бюджетом</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem; padding: 2rem; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 12px;">
+                    <h3 style="color: var(--color-success); margin-bottom: 1.5rem;">🔄 Постоянные процессы</h3>
+                    
+                    <div style="color: var(--color-text-secondary); line-height: 1.8;">
+                        <strong style="color: var(--color-text-primary);">→</strong> Регулярные 1-on-1 встречи с обратной связью для каждого члена команды<br>
+                        <strong style="color: var(--color-text-primary);">→</strong> Настройка аналитики и дашбордов (конверсия, качество лидов, работа с партнёрами)<br>
+                        <strong style="color: var(--color-text-primary);">→</strong> Еженедельные синхронизации команды аудита с CEO<br>
+                        <strong style="color: var(--color-text-primary);">→</strong> Мониторинг работы в CRM и дисциплины заполнения<br>
+                        <strong style="color: var(--color-text-primary);">→</strong> Работа с квалификацией лидов и scoring системой<br>
+                        <strong style="color: var(--color-text-primary);">→</strong> Менторинг и HR-поддержка команды
+                    </div>
+                </div>
+
+                <div style="margin-top: 2rem; padding: 2rem; background: linear-gradient(135deg, rgba(239, 68, 68, 0.15), rgba(245, 158, 11, 0.15)); border: 2px solid var(--color-danger); border-radius: 12px;">
+                    <h3 style="color: var(--color-danger); font-size: 1.5rem; margin-bottom: 1rem;">🔥 КРИТИЧНО: Вовлечение руководства</h3>
+                    
+                    <div style="background: var(--color-surface); padding: 1.5rem; border-radius: 8px; margin-bottom: 1rem;">
+                        <strong style="color: var(--color-text-primary); font-size: 1.1rem; display: block; margin-bottom: 1rem;">Необходимые действия:</strong>
+                        <ul style="color: var(--color-text-secondary); margin-left: 1.5rem; line-height: 1.8;">
+                            <li><strong>Переход от дружеских к деловым отношениям:</strong> Установить четкие границы между личными отношениями и профессиональными требованиями</li>
+                            <li><strong>Систематическая обратная связь:</strong> Проводить регулярные оценочные встречи с конкретными метриками и ожиданиями</li>
+                            <li><strong>Активное участие в изменениях:</strong> Присутствовать на ключевых встречах, поддерживать внедрение новых процессов</li>
+                            <li><strong>Требование дисциплины:</strong> Последовательно применять стандарты работы (CRM, отчетность, процессы) ко всем сотрудникам</li>
+                            <li><strong>Поддержка команды аудита:</strong> Публично поддерживать решения и рекомендации внешних консультантов</li>
+                        </ul>
+                    </div>
+
+                    <div style="background: rgba(239, 68, 68, 0.1); padding: 1rem; border-radius: 8px; color: var(--color-danger);">
+                        <strong>⚠️ Важно:</strong> Без активного вовлечения руководства в управление командой эффективность внедряемых изменений будет минимальной. Требуется переход от роли "друга команды" к роли "требовательного руководителя".
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const teamData = [
+            {
+                name: "Анна",
+                initials: "А",
+                role: "Senior Sales / Closer",
+                type: "senior",
+                tenure: "1-2 года",
+                daaScore: 74,
+                satisfaction: { work: 7, payment: 9, management: 10, team: 9 },
+                motivation: { clear: 10, transparent: 10, motivates: 10 },
+                badges: ["success:Топ-перформер", "info:Ключевой сотрудник", "success:DAA: 74"]
+            },
+            {
+                name: "Анастасия Михайлова",
+                initials: "АМ",
+                role: "Qualifier / Sales Support",
+                type: "qualifier",
+                tenure: "3-6 месяцев",
+                daaScore: 65,
+                satisfaction: { work: 10, payment: 9, management: 10, team: 10 },
+                motivation: { clear: 10, transparent: 10, motivates: 7 },
+                badges: ["success:Высокая мотивация", "info:DAA: 65", "warning:Нестабильный профиль"]
+            },
+            {
+                name: "Екатерина Салтан",
+                initials: "ЕС",
+                role: "Assistant / Resales / Sales",
+                type: "assistant",
+                tenure: "2+ года",
+                daaScore: 48,
+                satisfaction: { work: 7, payment: 7, management: 8, team: 8 },
+                motivation: { clear: 10, transparent: 10, motivates: 7 },
+                badges: ["warning:Риск ухода", "warning:DAA: 48", "danger:Тест в 12 ночи"]
+            },
+            {
+                name: "Дмитрий Максимов",
+                initials: "ДМ",
+                role: "Партнёрка / РОП",
+                type: "rop",
+                tenure: "3-6 месяцев",
+                daaScore: 37,
+                satisfaction: { work: 5, payment: 5, management: 5, team: 5 },
+                motivation: { clear: 10, transparent: 10, motivates: 7 },
+                badges: ["danger:DAA: 37 (критично)", "danger:Настойчивость: 15", "warning:Собеседование!"]
+            }
+        ];
+        
+        function renderTeamGrid() {
+            const grid = document.getElementById('teamGrid');
+            grid.innerHTML = '';
+            
+            teamData.forEach(member => {
+                const avgSatisfaction = Math.round(
+                    (member.satisfaction.work + member.satisfaction.payment + 
+                     member.satisfaction.management + member.satisfaction.team) / 4
+                );
+                
+                const satisfactionClass = avgSatisfaction >= 8 ? 'high' : 
+                                         avgSatisfaction >= 6 ? 'medium' : 
+                                         avgSatisfaction >= 4 ? 'low' : 'critical';
+                
+                const daaClass = member.daaScore >= 60 ? 'medium' : member.daaScore >= 45 ? 'low' : 'critical';
+                
+                const card = document.createElement('div');
+                card.className = 'member-card';
+                
+                let badgesHTML = '';
+                if (member.badges) {
+                    member.badges.forEach(badge => {
+                        const [type, text] = badge.split(':');
+                        badgesHTML += `<span class="badge badge-${type}">${text}</span>`;
+                    });
+                }
+                
+                card.innerHTML = `
+                    <div class="member-header">
+                        <div class="member-avatar">${member.initials}</div>
+                        <div class="member-info">
+                            <h3>${member.name}</h3>
+                            <span class="member-type type-${member.type}">${member.role}</span>
+                        </div>
+                    </div>
+                    
+                    ${badgesHTML ? `<div style="margin-bottom: 1rem;">${badgesHTML}</div>` : ''}
+                    
+                    <div class="metrics">
+                        <div class="metric">
+                            <div class="metric-label">Удовлетв.</div>
+                            <div class="metric-value ${satisfactionClass}">${avgSatisfaction}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">DAA Тест</div>
+                            <div class="metric-value ${daaClass}">${member.daaScore}</div>
+                        </div>
+                        <div class="metric">
+                            <div class="metric-label">Стаж</div>
+                            <div class="metric-value medium" style="font-size: 1rem;">${member.tenure}</div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-group">
+                        <div class="progress-item">
+                            <div class="progress-label">
+                                <span>Работа</span>
+                                <span>${member.satisfaction.work}/10</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: ${member.satisfaction.work * 10}%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-label">
+                                <span>Оплата</span>
+                                <span>${member.satisfaction.payment}/10</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: ${member.satisfaction.payment * 10}%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-label">
+                                <span>Руководство</span>
+                                <span>${member.satisfaction.management}/10</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: ${member.satisfaction.management * 10}%"></div>
+                            </div>
+                        </div>
+                        <div class="progress-item">
+                            <div class="progress-label">
+                                <span>Команда</span>
+                                <span>${member.satisfaction.team}/10</span>
+                            </div>
+                            <div class="progress-bar-container">
+                                <div class="progress-bar" style="width: ${member.satisfaction.team * 10}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+        
+        function showTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            document.getElementById(tabId).classList.add('active');
+            event.target.classList.add('active');
+        }
+        
+        renderTeamGrid();
+    </script>
+</body>
+</html>
