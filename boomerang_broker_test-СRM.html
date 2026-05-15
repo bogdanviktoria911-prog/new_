@@ -1,0 +1,1710 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Тренажёр брокера BOOMERANG | Проверка знаний</title>
+    <style>
+        :root {
+            --bg-primary: #0a0e27;
+            --bg-secondary: #141938;
+            --bg-card: #1a1f3a;
+            --accent-primary: #00d9ff;
+            --accent-secondary: #7b61ff;
+            --accent-success: #00ff88;
+            --accent-warning: #ffb800;
+            --accent-error: #ff3366;
+            --text-primary: #ffffff;
+            --text-secondary: #a0a6c5;
+            --text-muted: #6b7280;
+            --border-color: rgba(123, 97, 255, 0.2);
+            --shadow-glow: 0 0 20px rgba(0, 217, 255, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-secondary) 100%);
+            color: var(--text-primary);
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: 
+                radial-gradient(circle at 20% 30%, rgba(123, 97, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(0, 217, 255, 0.08) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0 30px;
+            border-bottom: 2px solid var(--border-color);
+            margin-bottom: 40px;
+            animation: slideDown 0.6s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        .progress-container {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-glow);
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            width: 0%;
+            transition: width 0.5s ease;
+            box-shadow: 0 0 10px var(--accent-primary);
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+
+        .score-display {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
+            color: var(--bg-primary);
+            font-size: 0.95rem;
+        }
+
+        .section {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow-glow);
+            animation: fadeInUp 0.5s ease-out backwards;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section:nth-child(2) { animation-delay: 0.1s; }
+        .section:nth-child(3) { animation-delay: 0.2s; }
+        .section:nth-child(4) { animation-delay: 0.3s; }
+        .section:nth-child(5) { animation-delay: 0.4s; }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .section-badge {
+            background: rgba(123, 97, 255, 0.2);
+            color: var(--accent-secondary);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border: 1px solid var(--accent-secondary);
+        }
+
+        .question {
+            margin-bottom: 25px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+            border: 1px solid transparent;
+            transition: all 0.3s ease, transform 0.3s ease;
+        }
+
+        .question:hover {
+            background: rgba(255, 255, 255, 0.04);
+            border-color: var(--border-color);
+        }
+
+        .question.correct {
+            background: rgba(0, 255, 136, 0.08);
+            border-color: var(--accent-success);
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
+        }
+
+        .question.incorrect {
+            background: rgba(255, 51, 102, 0.08);
+            border-color: var(--accent-error);
+            box-shadow: 0 0 15px rgba(255, 51, 102, 0.2);
+        }
+
+        .question-label {
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-size: 1.05rem;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .answer-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+
+        .answer-indicator.correct {
+            background: rgba(0, 255, 136, 0.2);
+            color: var(--accent-success);
+        }
+
+        .answer-indicator.incorrect {
+            background: rgba(255, 51, 102, 0.2);
+            color: var(--accent-error);
+        }
+
+        .answer-indicator svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        input[type="text"], textarea, select {
+            width: 100%;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 3px rgba(0, 217, 255, 0.1);
+        }
+
+        select.stage-select {
+            cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2300d9ff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+            padding-right: 40px;
+        }
+
+        select.stage-select option {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            padding: 10px;
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .radio-group, .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .radio-option, .checkbox-option {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .radio-option:hover, .checkbox-option:hover {
+            background: rgba(123, 97, 255, 0.1);
+            border-color: var(--accent-secondary);
+        }
+
+        .radio-option input, .checkbox-option input {
+            margin-right: 12px;
+            cursor: pointer;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent-primary);
+        }
+
+        .radio-option label, .checkbox-option label {
+            cursor: pointer;
+            color: var(--text-secondary);
+            flex: 1;
+        }
+
+        .case-scenario {
+            background: linear-gradient(135deg, rgba(123, 97, 255, 0.1), rgba(0, 217, 255, 0.05));
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-primary);
+            margin-bottom: 20px;
+            font-style: italic;
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: var(--bg-primary);
+            border: none;
+            padding: 14px 32px;
+            font-size: 1.05rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 217, 255, 0.3);
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 25px rgba(0, 217, 255, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-container {
+            text-align: center;
+            margin: 40px 0;
+        }
+
+        .feedback {
+            margin-top: 15px;
+            padding: 16px 20px;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            display: none;
+            line-height: 1.6;
+        }
+
+        .feedback.show {
+            display: block;
+            animation: slideIn 0.4s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feedback.correct {
+            background: rgba(0, 255, 136, 0.15);
+            color: var(--accent-success);
+            border: 2px solid var(--accent-success);
+        }
+
+        .feedback.incorrect {
+            background: rgba(255, 51, 102, 0.15);
+            color: var(--accent-error);
+            border: 2px solid var(--accent-error);
+        }
+
+        .feedback .correct-answer {
+            display: block;
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .result-container {
+            display: none;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            padding: 50px;
+            margin-top: 40px;
+            margin-bottom: 40px;
+            text-align: center;
+            box-shadow: 0 10px 50px rgba(0, 217, 255, 0.2);
+            animation: scaleIn 0.5s ease-out;
+        }
+
+        @keyframes scaleIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .result-container.show {
+            display: block;
+        }
+
+        .result-score {
+            font-size: 5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 20px;
+            line-height: 1;
+        }
+
+        .result-grade {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .result-grade.excellent { color: var(--accent-success); }
+        .result-grade.good { color: var(--accent-primary); }
+        .result-grade.satisfactory { color: var(--accent-warning); }
+        .result-grade.unsatisfactory { color: var(--accent-error); }
+
+        .result-feedback {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .result-details {
+            background: rgba(255, 255, 255, 0.02);
+            padding: 20px;
+            border-radius: 12px;
+            margin-top: 30px;
+            text-align: left;
+        }
+
+        .result-section {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .result-section:last-child {
+            border-bottom: none;
+        }
+
+        .result-section-name {
+            color: var(--text-secondary);
+        }
+
+        .result-section-score {
+            font-weight: 600;
+            color: var(--accent-primary);
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .result-container {
+                padding: 30px 20px;
+            }
+
+            .result-score {
+                font-size: 3.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>ТРЕНАЖЁР БРОКЕРА</h1>
+            <p class="subtitle">Проверка знаний воронки продаж BOOMERANG</p>
+        </header>
+
+        <div class="progress-container">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-info">
+                <span>Прогресс: <span id="progressText">0/5</span> разделов</span>
+                <span class="score-display">Баллы: <span id="currentScore">0</span></span>
+            </div>
+        </div>
+
+        <div id="testSections">
+            <!-- ЧАСТЬ 1: ЗНАНИЕ РЕГЛАМЕНТА -->
+            <div class="section" data-section="1">
+                <div class="section-header">
+                    <h2>Часть 1: Знание регламента</h2>
+                    <span class="section-badge">16 баллов</span>
+                </div>
+
+                <div class="question" data-points="3" data-answer="не более 1 часа">
+                    <div class="question-label">1. За какое максимальное время нужно ознакомиться с карточкой квалифицированного лида (в рабочее время)?</div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q1" value="не более 1 часа" id="q1_a">
+                            <label for="q1_a">Не более 1 часа</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q1" value="в течение 2 часов" id="q1_b">
+                            <label for="q1_b">В течение 2 часов</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q1" value="до конца рабочего дня" id="q1_c">
+                            <label for="q1_c">До конца рабочего дня</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q1" value="в течение 30 минут" id="q1_d">
+                            <label for="q1_d">В течение 30 минут</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="3" data-answer="в течение 1 часа">
+                    <div class="question-label">2. За какое время провести первый контакт после передачи от квалификатора (в рабочее время)?</div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q2" value="в течение 1 часа" id="q2_a">
+                            <label for="q2_a">В течение 1 часа</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q2" value="в течение 30 минут" id="q2_b">
+                            <label for="q2_b">В течение 30 минут</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q2" value="в течение 4 часов" id="q2_c">
+                            <label for="q2_c">В течение 4 часов</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q2" value="в конце рабочего дня" id="q2_d">
+                            <label for="q2_d">В конце рабочего дня</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="3" data-answer="не позже 72 часов от передачи">
+                    <div class="question-label">3. За какое максимальное время провести презентацию после передачи лида?</div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q3" value="не позже 72 часов" id="q3_a">
+                            <label for="q3_a">Не позже 72 часов от передачи</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q3" value="не позже 72 часов от передачи" id="q3_b">
+                            <label for="q3_b">Не позже 72 часов от первой встречи</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q3" value="в течение 24 часов" id="q3_c">
+                            <label for="q3_c">В течение 24 часов</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q3" value="в течение недели" id="q3_d">
+                            <label for="q3_d">В течение недели</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="3" data-answer="в течение 30 минут">
+                    <div class="question-label">4. За какое время отправить follow-up после встречи?</div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q4" value="в течение 30 минут" id="q4_a">
+                            <label for="q4_a">В течение 30 минут</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q4" value="в течение 1 часа" id="q4_b">
+                            <label for="q4_b">В течение 1 часа</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q4" value="в течение 2 часов" id="q4_c">
+                            <label for="q4_c">В течение 2 часов</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q4" value="в конце дня" id="q4_d">
+                            <label for="q4_d">В конце дня</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="3" data-answer="в течение 48 часов">
+                    <div class="question-label">5. За какое время передать реквизиты на задаток после получения согласия?</div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q5" value="в течение 48 часов" id="q5_a">
+                            <label for="q5_a">В течение 48 часов</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q5" value="в течение 24 часов" id="q5_b">
+                            <label for="q5_b">В течение 24 часов</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q5" value="в течение 72 часов" id="q5_c">
+                            <label for="q5_c">В течение 72 часов</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q5" value="немедленно" id="q5_d">
+                            <label for="q5_d">Немедленно</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="4" data-answer="checkbox" data-correct="q6_a,q6_b,q6_c,q6_d,q6_e,q6_f">
+                    <div class="question-label">6. Выберите критерии ЦЕЛЕВОГО лида (можно выбрать несколько):</div>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option">
+                            <input type="checkbox" name="q6" value="q6_a" id="q6_a">
+                            <label for="q6_a">Идёт на контакт</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" name="q6" value="q6_b" id="q6_b">
+                            <label for="q6_b">Есть интерес к покупке недвижимости / инвестициям</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" name="q6" value="q6_c" id="q6_c">
+                            <label for="q6_c">Есть бюджет / есть где взять в ближайшее время</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" name="q6" value="q6_d" id="q6_d">
+                            <label for="q6_d">Готов покупать сейчас / в ближайшее время</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" name="q6" value="q6_e" id="q6_e">
+                            <label for="q6_e">Отвечает на вопросы про бюджет и сроки</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" name="q6" value="q6_f" id="q6_f">
+                            <label for="q6_f">Рассматривает конкретные объекты</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+            </div>
+
+            <!-- ЧАСТЬ 2: ВЕРНО/НЕВЕРНО -->
+            <div class="section" data-section="2">
+                <div class="section-header">
+                    <h2>Часть 2: Верно / Неверно</h2>
+                    <span class="section-badge">20 баллов</span>
+                </div>
+
+                <div class="question" data-points="2" data-answer="нет">
+                    <div class="question-label">1. Можно отправить прайс клиенту до квалификации?</div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q11" value="да" id="q11_yes">
+                            <label for="q11_yes">Да</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q11" value="нет" id="q11_no">
+                            <label for="q11_no">Нет</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="2" data-answer="нет">
+                    <div class="question-label">2. Follow-up отправляется в течение 1 часа?</div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q12" value="да" id="q12_yes">
+                            <label for="q12_yes">Да</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q12" value="нет" id="q12_no">
+                            <label for="q12_no">Нет (30 минут)</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="2" data-answer="да">
+                    <div class="question-label">3. При игнорировании 3+ дня подключить "смену голоса"?</div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q13" value="да" id="q13_yes">
+                            <label for="q13_yes">Да</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q13" value="нет" id="q13_no">
+                            <label for="q13_no">Нет</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="2" data-answer="нет">
+                    <div class="question-label">4. Данные в CRM вносятся в конце рабочего дня?</div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q14" value="да" id="q14_yes">
+                            <label for="q14_yes">Да</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q14" value="нет" id="q14_no">
+                            <label for="q14_no">Нет (в течение 5 минут)</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="2" data-answer="да">
+                    <div class="question-label">5. Нецелевой лид — клиент, готовый покупать через 14 месяцев?</div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q15" value="да" id="q15_yes">
+                            <label for="q15_yes">Да</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q15" value="нет" id="q15_no">
+                            <label for="q15_no">Нет</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="2" data-answer="нет">
+                    <div class="question-label">6. Можно оставить клиента без задачи на 3 дня?</div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q16" value="да" id="q16_yes">
+                            <label for="q16_yes">Да</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q16" value="нет" id="q16_no">
+                            <label for="q16_no">Нет (максимум 2 дня)</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="2" data-answer="да">
+                    <div class="question-label">7. Коммуникации в WhatsApp фиксируются в CRM?</div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q17" value="да" id="q17_yes">
+                            <label for="q17_yes">Да</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q17" value="нет" id="q17_no">
+                            <label for="q17_no">Нет</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="2" data-answer="да">
+                    <div class="question-label">8. При закрытии "Не реализовано" обязательно указать причину?</div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q18" value="да" id="q18_yes">
+                            <label for="q18_yes">Да</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q18" value="нет" id="q18_no">
+                            <label for="q18_no">Нет</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="2" data-answer="да">
+                    <div class="question-label">9. На этапе "Успешно реализовано" прикрепить договор к CRM?</div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q19" value="да" id="q19_yes">
+                            <label for="q19_yes">Да</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q19" value="нет" id="q19_no">
+                            <label for="q19_no">Нет</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="2" data-answer="нет">
+                    <div class="question-label">10. Алгоритм прогрева длится максимум 14 дней?</div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q20" value="да" id="q20_yes">
+                            <label for="q20_yes">Да</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q20" value="нет" id="q20_no">
+                            <label for="q20_no">Нет (28 дней)</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+            </div>
+
+            <!-- ЧАСТЬ 3: ОПРЕДЕЛЕНИЕ ЭТАПА -->
+            <div class="section" data-section="3">
+                <div class="section-header">
+                    <h2>Часть 3: Определение этапа воронки</h2>
+                    <span class="section-badge">15 баллов</span>
+                </div>
+
+                <div class="question" data-points="1.5" data-answer="интерес сотрудничать подтверждён">
+                    <div class="question-label">1. Клиент: "Да, интересно, давайте посмотрю объекты" → Этап?</div>
+                    <select class="stage-select">
+                        <option value="">Выберите этап воронки</option>
+                        <option value="квалифицирован">Квалифицирован</option>
+                        <option value="взят в работу">Взят в работу</option>
+                        <option value="интерес сотрудничать подтверждён">Интерес сотрудничать подтверждён</option>
+                        <option value="презентация проведена">Презентация проведена</option>
+                        <option value="презентация защищена">Презентация защищена / Оффер принят</option>
+                        <option value="прогрев запущен">Прогрев запущен</option>
+                        <option value="отложенный спрос">Отложенный спрос</option>
+                        <option value="согласие получено">Согласие получено</option>
+                        <option value="задаток получен">Задаток получен</option>
+                        <option value="успешно реализовано">Успешно реализовано</option>
+                    </select>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="1.5" data-answer="презентация защищена">
+                    <div class="question-label">2. Клиент выбрал конкретный юнит и готов обсуждать оплату → Этап?</div>
+                    <select class="stage-select">
+                        <option value="">Выберите этап воронки</option>
+                        <option value="квалифицирован">Квалифицирован</option>
+                        <option value="взят в работу">Взят в работу</option>
+                        <option value="интерес сотрудничать подтверждён">Интерес сотрудничать подтверждён</option>
+                        <option value="презентация проведена">Презентация проведена</option>
+                        <option value="презентация защищена">Презентация защищена / Оффер принят</option>
+                        <option value="прогрев запущен">Прогрев запущен</option>
+                        <option value="отложенный спрос">Отложенный спрос</option>
+                        <option value="согласие получено">Согласие получено</option>
+                        <option value="задаток получен">Задаток получен</option>
+                        <option value="успешно реализовано">Успешно реализовано</option>
+                    </select>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="1.5" data-answer="задаток получен">
+                    <div class="question-label">3. Клиент внёс задаток 100,000 бат, ждём договор → Этап?</div>
+                    <select class="stage-select">
+                        <option value="">Выберите этап воронки</option>
+                        <option value="квалифицирован">Квалифицирован</option>
+                        <option value="взят в работу">Взят в работу</option>
+                        <option value="интерес сотрудничать подтверждён">Интерес сотрудничать подтверждён</option>
+                        <option value="презентация проведена">Презентация проведена</option>
+                        <option value="презентация защищена">Презентация защищена / Оффер принят</option>
+                        <option value="прогрев запущен">Прогрев запущен</option>
+                        <option value="отложенный спрос">Отложенный спрос</option>
+                        <option value="согласие получено">Согласие получено</option>
+                        <option value="задаток получен">Задаток получен</option>
+                        <option value="успешно реализовано">Успешно реализовано</option>
+                    </select>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="1.5" data-answer="квалифицирован">
+                    <div class="question-label">4. Приняли лид от квалификатора, прочитали карточку → Этап?</div>
+                    <select class="stage-select">
+                        <option value="">Выберите этап воронки</option>
+                        <option value="квалифицирован">Квалифицирован</option>
+                        <option value="взят в работу">Взят в работу</option>
+                        <option value="интерес сотрудничать подтверждён">Интерес сотрудничать подтверждён</option>
+                        <option value="презентация проведена">Презентация проведена</option>
+                        <option value="презентация защищена">Презентация защищена / Оффер принят</option>
+                        <option value="прогрев запущен">Прогрев запущен</option>
+                        <option value="отложенный спрос">Отложенный спрос</option>
+                        <option value="согласие получено">Согласие получено</option>
+                        <option value="задаток получен">Задаток получен</option>
+                        <option value="успешно реализовано">Успешно реализовано</option>
+                    </select>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="1.5" data-answer="прогрев запущен">
+                    <div class="question-label">5. Клиент после презентации: "Мне нужно подумать 5 дней" → Этап?</div>
+                    <select class="stage-select">
+                        <option value="">Выберите этап воронки</option>
+                        <option value="квалифицирован">Квалифицирован</option>
+                        <option value="взят в работу">Взят в работу</option>
+                        <option value="интерес сотрудничать подтверждён">Интерес сотрудничать подтверждён</option>
+                        <option value="презентация проведена">Презентация проведена</option>
+                        <option value="презентация защищена">Презентация защищена / Оффер принят</option>
+                        <option value="прогрев запущен">Прогрев запущен</option>
+                        <option value="отложенный спрос">Отложенный спрос</option>
+                        <option value="согласие получено">Согласие получено</option>
+                        <option value="задаток получен">Задаток получен</option>
+                        <option value="успешно реализовано">Успешно реализовано</option>
+                    </select>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="1.5" data-answer="отложенный спрос">
+                    <div class="question-label">6. Клиент купит через 2 месяца после продажи квартиры → Этап?</div>
+                    <select class="stage-select">
+                        <option value="">Выберите этап воронки</option>
+                        <option value="квалифицирован">Квалифицирован</option>
+                        <option value="взят в работу">Взят в работу</option>
+                        <option value="интерес сотрудничать подтверждён">Интерес сотрудничать подтверждён</option>
+                        <option value="презентация проведена">Презентация проведена</option>
+                        <option value="презентация защищена">Презентация защищена / Оффер принят</option>
+                        <option value="прогрев запущен">Прогрев запущен</option>
+                        <option value="отложенный спрос">Отложенный спрос</option>
+                        <option value="согласие получено">Согласие получено</option>
+                        <option value="задаток получен">Задаток получен</option>
+                        <option value="успешно реализовано">Успешно реализовано</option>
+                    </select>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="1.5" data-answer="согласие получено">
+                    <div class="question-label">7. Клиент: "Готов, отправляйте реквизиты на задаток" → Этап?</div>
+                    <select class="stage-select">
+                        <option value="">Выберите этап воронки</option>
+                        <option value="квалифицирован">Квалифицирован</option>
+                        <option value="взят в работу">Взят в работу</option>
+                        <option value="интерес сотрудничать подтверждён">Интерес сотрудничать подтверждён</option>
+                        <option value="презентация проведена">Презентация проведена</option>
+                        <option value="презентация защищена">Презентация защищена / Оффер принят</option>
+                        <option value="прогрев запущен">Прогрев запущен</option>
+                        <option value="отложенный спрос">Отложенный спрос</option>
+                        <option value="согласие получено">Согласие получено</option>
+                        <option value="задаток получен">Задаток получен</option>
+                        <option value="успешно реализовано">Успешно реализовано</option>
+                    </select>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="1.5" data-answer="презентация проведена">
+                    <div class="question-label">8. Провели презентацию, клиент выбирает между 3 проектами → Этап?</div>
+                    <select class="stage-select">
+                        <option value="">Выберите этап воронки</option>
+                        <option value="квалифицирован">Квалифицирован</option>
+                        <option value="взят в работу">Взят в работу</option>
+                        <option value="интерес сотрудничать подтверждён">Интерес сотрудничать подтверждён</option>
+                        <option value="презентация проведена">Презентация проведена</option>
+                        <option value="презентация защищена">Презентация защищена / Оффер принят</option>
+                        <option value="прогрев запущен">Прогрев запущен</option>
+                        <option value="отложенный спрос">Отложенный спрос</option>
+                        <option value="согласие получено">Согласие получено</option>
+                        <option value="задаток получен">Задаток получен</option>
+                        <option value="успешно реализовано">Успешно реализовано</option>
+                    </select>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="1.5" data-answer="успешно реализовано">
+                    <div class="question-label">9. Полная оплата получена, договор подписан, комиссия получена → Этап?</div>
+                    <select class="stage-select">
+                        <option value="">Выберите этап воронки</option>
+                        <option value="квалифицирован">Квалифицирован</option>
+                        <option value="взят в работу">Взят в работу</option>
+                        <option value="интерес сотрудничать подтверждён">Интерес сотрудничать подтверждён</option>
+                        <option value="презентация проведена">Презентация проведена</option>
+                        <option value="презентация защищена">Презентация защищена / Оффер принят</option>
+                        <option value="прогрев запущен">Прогрев запущен</option>
+                        <option value="отложенный спрос">Отложенный спрос</option>
+                        <option value="согласие получено">Согласие получено</option>
+                        <option value="задаток получен">Задаток получен</option>
+                        <option value="успешно реализовано">Успешно реализовано</option>
+                    </select>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="1.5" data-answer="взят в работу">
+                    <div class="question-label">10. Клиент подтвердил интерес после первого звонка → Этап?</div>
+                    <select class="stage-select">
+                        <option value="">Выберите этап воронки</option>
+                        <option value="квалифицирован">Квалифицирован</option>
+                        <option value="взят в работу">Взят в работу</option>
+                        <option value="интерес сотрудничать подтверждён">Интерес сотрудничать подтверждён</option>
+                        <option value="презентация проведена">Презентация проведена</option>
+                        <option value="презентация защищена">Презентация защищена / Оффер принят</option>
+                        <option value="прогрев запущен">Прогрев запущен</option>
+                        <option value="отложенный спрос">Отложенный спрос</option>
+                        <option value="согласие получено">Согласие получено</option>
+                        <option value="задаток получен">Задаток получен</option>
+                        <option value="успешно реализовано">Успешно реализовано</option>
+                    </select>
+                    <div class="feedback"></div>
+                </div>
+            </div>
+
+            <!-- ЧАСТЬ 4: КЕЙСЫ -->
+            <div class="section" data-section="4">
+                <div class="section-header">
+                    <h2>Часть 4: Кейс-симуляции</h2>
+                    <span class="section-badge">70 баллов</span>
+                </div>
+
+                <div class="question" data-points="7" data-answer="c">
+                    <div class="question-label">Кейс 1 (7 баллов)</div>
+                    <div class="case-scenario">
+                        Лид пришёл в 14:30. Сейчас 16:00. Карточка: бюджет 18 млн, цель — инвестиции, срок 1-2 месяца. Что делаете ПРЯМО СЕЙЧАС?
+                    </div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q31" value="a" id="q31_a">
+                            <label for="q31_a">A) Пишу квалификатору, ставлю задачу на звонок завтра</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q31" value="b" id="q31_b">
+                            <label for="q31_b">B) Звоню клиенту, потом уведомляю квалификатора</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q31" value="c" id="q31_c">
+                            <label for="q31_c">C) Уведомляю квалификатора, проверяю CRM, ставлю задачу, звоню клиенту в течение часа</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q31" value="d" id="q31_d">
+                            <label for="q31_d">D) Отправляю подборку объектов в WhatsApp</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="7" data-answer="b">
+                    <div class="question-label">Кейс 2 (7 баллов)</div>
+                    <div class="case-scenario">
+                        После презентации клиент: "Понравилось, но нужно посоветоваться с женой. Напишу через неделю". Сейчас 18:00, встреча была в 16:30.
+                    </div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q32" value="a" id="q32_a">
+                            <label for="q32_a">A) "Хорошо, жду", перевожу в "Презентация проведена", задача через неделю</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q32" value="b" id="q32_b">
+                            <label for="q32_b">B) Follow-up 30 мин, перевожу в "Прогрев", на 2-й день отрабатываю возражения</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q32" value="c" id="q32_c">
+                            <label for="q32_c">C) Настаиваю на решении сегодня, скидка 5% за 24 часа</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q32" value="d" id="q32_d">
+                            <label for="q32_d">D) Перевожу в "Отложенный спрос", задача через 2 недели</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="7" data-answer="b">
+                    <div class="question-label">Кейс 3 (7 баллов)</div>
+                    <div class="case-scenario">
+                        Отправили реквизиты на задаток 3 дня назад. Клиент не отвечает на звонки и WhatsApp.
+                    </div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q33" value="a" id="q33_a">
+                            <label for="q33_a">A) Жду ещё 4 дня, потом закрываю как "Нет ответа"</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q33" value="b" id="q33_b">
+                            <label for="q33_b">B) Подключаю "смену голоса" — РОПа или коллегу</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q33" value="c" id="q33_c">
+                            <label for="q33_c">C) "Если не ответите за 24 часа, закрою карточку"</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q33" value="d" id="q33_d">
+                            <label for="q33_d">D) Перевожу в "Прогрев", алгоритм 5 касаний</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="7" data-answer="b">
+                    <div class="question-label">Кейс 4 (7 баллов)</div>
+                    <div class="case-scenario">
+                        Новый лид. Клиент: "Хочу купить для инвестиций. Бюджет есть. Скиньте варианты на почту".
+                    </div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q34" value="a" id="q34_a">
+                            <label for="q34_a">A) Отправляю подборку из 10 объектов, жду ответа</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q34" value="b" id="q34_b">
+                            <label for="q34_b">B) Задаю вопросы, выявляю потребность, назначаю встречу для презентации</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q34" value="c" id="q34_c">
+                            <label for="q34_c">C) Отправляю общий прайс-лист компании</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q34" value="d" id="q34_d">
+                            <label for="q34_d">D) Сразу предлагаю встречу на объекте завтра</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="7" data-answer="b">
+                    <div class="question-label">Кейс 5 (7 баллов)</div>
+                    <div class="case-scenario">
+                        Задаток внесён 5 дней назад. Срок полной оплаты — 7 дней. Сегодня 6-й день, клиент не выходит на связь.
+                    </div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q35" value="a" id="q35_a">
+                            <label for="q35_a">A) Жду до конца 7-го дня, потом перезваниваю</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q35" value="b" id="q35_b">
+                            <label for="q35_b">B) Перезваниваю СЕГОДНЯ, напоминаю о выгодах, беру новые обязательства</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q35" value="c" id="q35_c">
+                            <label for="q35_c">C) Пишу в WhatsApp: "Напоминаю, завтра последний день"</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q35" value="d" id="q35_d">
+                            <label for="q35_d">D) Подключаю юриста для претензии</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="7" data-answer="c">
+                    <div class="question-label">Кейс 6 (7 баллов)</div>
+                    <div class="case-scenario">
+                        Клиент после презентации: "Мне всё понравилось, но цена высокая. У конкурентов дешевле". Вы проверили — у конкурентов действительно на 10% дешевле, но объект в другом районе.
+                    </div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q36" value="a" id="q36_a">
+                            <label for="q36_a">A) Предлагаю скидку 5% чтобы закрыть сделку сегодня</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q36" value="b" id="q36_b">
+                            <label for="q36_b">B) Соглашаюсь: "Да, у них дешевле, смотрите сами"</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q36" value="c" id="q36_c">
+                            <label for="q36_c">C) Показываю преимущества локации, инфраструктуры, застройщика. Работаю с ценностью, а не ценой</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q36" value="d" id="q36_d">
+                            <label for="q36_d">D) "Давайте я уточню у застройщика возможность скидки"</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="7" data-answer="a">
+                    <div class="question-label">Кейс 7 (7 баллов)</div>
+                    <div class="case-scenario">
+                        Клиент в этапе "Прогрев запущен", день 14. Вы сделали все 5 касаний по алгоритму. Клиент отвечает, но решение не принимает: "Мне нужно ещё подумать".
+                    </div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q37" value="a" id="q37_a">
+                            <label for="q37_a">A) Перевожу в "Отложенный спрос", договариваюсь о дате следующего касания</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q37" value="b" id="q37_b">
+                            <label for="q37_b">B) Продолжаю прогрев, добавляю ещё 5 касаний</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q37" value="c" id="q37_c">
+                            <label for="q37_c">C) Закрываю как "Не реализовано — не готов принять решение"</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q37" value="d" id="q37_d">
+                            <label for="q37_d">D) Предлагаю специальное предложение со скидкой на 48 часов</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="7" data-answer="b">
+                    <div class="question-label">Кейс 8 (7 баллов)</div>
+                    <div class="case-scenario">
+                        Вы провели встречу с клиентом. Он выбрал юнит, сказал "Готов!", вы перевели в "Согласие получено". Прошло 30 минут после встречи. Что вы уже ОБЯЗАТЕЛЬНО сделали?
+                    </div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q38" value="a" id="q38_a">
+                            <label for="q38_a">A) Отправил follow-up и внёс данные в CRM</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q38" value="b" id="q38_b">
+                            <label for="q38_b">B) Отправил follow-up, внёс данные в CRM, выставил счёт на задаток</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q38" value="c" id="q38_c">
+                            <label for="q38_c">C) Отправил реквизиты на задаток</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q38" value="d" id="q38_d">
+                            <label for="q38_d">D) Позвонил застройщику для резервации юнита</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="7" data-answer="c">
+                    <div class="question-label">Кейс 9 (7 баллов)</div>
+                    <div class="case-scenario">
+                        Клиент в WhatsApp: "Я передумал. Не буду покупать. Спасибо за презентацию". Вы провели 2 встречи, клиент был очень заинтересован.
+                    </div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q39" value="a" id="q39_a">
+                            <label for="q39_a">A) Пишу: "Жаль, что так вышло. Обращайтесь, если передумаете"</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q39" value="b" id="q39_b">
+                            <label for="q39_b">B) Сразу закрываю в CRM как "Не реализовано"</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q39" value="c" id="q39_c">
+                            <label for="q39_c">C) Звоню клиенту, выясняю истинную причину отказа, работаю с возражениями</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q39" value="d" id="q39_d">
+                            <label for="q39_d">D) Предлагаю другие объекты с более низкой ценой</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="7" data-answer="b">
+                    <div class="question-label">Кейс 10 (7 баллов)</div>
+                    <div class="case-scenario">
+                        Новый лид от квалификатора. В карточке CRM заполнены: имя, телефон, email, бюджет 20 млн. Поле "Цель покупки" пустое. Поле "Срок покупки" пустое. Что делаете?
+                    </div>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="q40" value="a" id="q40_a">
+                            <label for="q40_a">A) Сразу звоню, начинаю презентацию объектов под бюджет 20 млн</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q40" value="b" id="q40_b">
+                            <label for="q40_b">B) Звоню, выясняю цель и сроки, дозаполняю карточку, затем назначаю встречу</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q40" value="c" id="q40_c">
+                            <label for="q40_c">C) Возвращаю лид квалификатору — карточка заполнена неполностью</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="q40" value="d" id="q40_d">
+                            <label for="q40_d">D) Отправляю клиенту подборку на email, жду ответа</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+            </div>
+
+            <!-- ЧАСТЬ 5: НАЙДИТЕ ОШИБКИ -->
+            <div class="section" data-section="5">
+                <div class="section-header">
+                    <h2>Часть 5: Найдите ошибки</h2>
+                    <span class="section-badge">20 баллов</span>
+                </div>
+
+                <div class="question" data-points="10" data-answer="checkbox" data-correct="q36_a,q36_b,q36_c,q36_d,q36_e">
+                    <div class="question-label">Ситуация 1 (10 баллов)</div>
+                    <div class="case-scenario">
+                        Брокер Иван: получил лид в 10:00. В 14:00 написал клиенту и отправил 5 PDF с прайсами. Клиент не ответил 2 дня. Иван закрыл как "Нет ответа" без комментария. Квалификатору не сообщил.
+                    </div>
+                    <label style="font-weight: normal; color: var(--text-secondary); margin-top: 10px; margin-bottom: 12px; display: block;">Выберите ВСЕ ошибки (5 правильных, 1 неправильный вариант):</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option">
+                            <input type="checkbox" name="q36" value="q36_a" id="q36_a">
+                            <label for="q36_a">Нарушен SLA первого контакта (должен быть в течение 1 часа)</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" name="q36" value="q36_b" id="q36_b">
+                            <label for="q36_b">Отправил прайс до квалификации и выявления потребности (запрещено)</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" name="q36" value="q36_c" id="q36_c">
+                            <label for="q36_c">Не применил алгоритм 6 касаний при НДЗ</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" name="q36" value="q36_d" id="q36_d">
+                            <label for="q36_d">Закрыл без указания причины в комментарии CRM</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" name="q36" value="q36_e" id="q36_e">
+                            <label for="q36_e">Не уведомил квалификатора о взятии лида в работу</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" name="q36" value="q36_f" id="q36_f">
+                            <label for="q36_f">Не внёс данные в CRM в течение 5 минут</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+
+                <div class="question" data-points="10" data-answer="checkbox" data-correct="q37_a,q37_b,q37_c,q37_d">
+                    <div class="question-label">Ситуация 2 (10 баллов)</div>
+                    <div class="case-scenario">
+                        Брокер Марина: презентация во вторник 15:00. Клиент выбрал объект: "Готов!". Марина перевела в "Согласие получено". Follow-up отправила в четверг утром. Счёт выставила в пятницу. Данные в CRM внесла вечером пятницы. Реквизиты передала через 72 часа.
+                    </div>
+                    <label style="font-weight: normal; color: var(--text-secondary); margin-top: 10px; margin-bottom: 12px; display: block;">Выберите ВСЕ ошибки (4 правильных, 2 неправильных варианта):</label>
+                    <div class="checkbox-group">
+                        <div class="checkbox-option">
+                            <input type="checkbox" name="q37" value="q37_a" id="q37_a">
+                            <label for="q37_a">Follow-up должен быть отправлен в течение 30 минут, а не через 2 дня</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" name="q37" value="q37_b" id="q37_b">
+                            <label for="q37_b">Реквизиты должны быть переданы в течение 48 часов, а не 72</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" name="q37" value="q37_c" id="q37_c">
+                            <label for="q37_c">Данные в CRM вносятся в течение 5 минут, а не через 3 дня</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" name="q37" value="q37_d" id="q37_d">
+                            <label for="q37_d">Счёт должен быть выставлен сразу при переводе в "Согласие получено"</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" name="q37" value="q37_e" id="q37_e">
+                            <label for="q37_e">Не подключила "смену голоса" при игнорировании клиента</label>
+                        </div>
+                        <div class="checkbox-option">
+                            <input type="checkbox" name="q37" value="q37_f" id="q37_f">
+                            <label for="q37_f">Не уведомила квалификатора о результате встречи</label>
+                        </div>
+                    </div>
+                    <div class="feedback"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="btn-container">
+            <button class="btn" id="checkAnswersBtn">Проверить результаты</button>
+        </div>
+
+        <div class="result-container" id="resultContainer">
+            <h2 style="margin-bottom: 30px; font-size: 1.8rem; color: var(--text-primary);">📊 Итоговые результаты</h2>
+            <div class="result-score" id="finalScore">0</div>
+            <div class="result-grade" id="gradeText">ОТЛИЧНО</div>
+            <div class="result-feedback" id="feedbackText"></div>
+            
+            <div class="result-details">
+                <div class="result-section">
+                    <span class="result-section-name">Часть 1: Знание регламента</span>
+                    <span class="result-section-score" id="score1">0/16</span>
+                </div>
+                <div class="result-section">
+                    <span class="result-section-name">Часть 2: Верно/Неверно</span>
+                    <span class="result-section-score" id="score2">0/20</span>
+                </div>
+                <div class="result-section">
+                    <span class="result-section-name">Часть 3: Определение этапа</span>
+                    <span class="result-section-score" id="score3">0/15</span>
+                </div>
+                <div class="result-section">
+                    <span class="result-section-name">Часть 4: Кейс-симуляции</span>
+                    <span class="result-section-score" id="score4">0/70</span>
+                </div>
+                <div class="result-section">
+                    <span class="result-section-name">Часть 5: Найдите ошибки</span>
+                    <span class="result-section-score" id="score5">0/20</span>
+                </div>
+            </div>
+
+            <div class="btn-container">
+                <button class="btn" onclick="location.reload()">Пройти заново</button>
+                <button class="btn" onclick="scrollToFirstError()" style="background: linear-gradient(135deg, var(--accent-warning), var(--accent-error)); margin-left: 15px;">Посмотреть ошибки</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Normalize answer for comparison
+        function normalizeAnswer(answer) {
+            if (!answer) return '';
+            return answer.toLowerCase()
+                .trim()
+                .replace(/[.,!?;:()]/g, '')
+                .replace(/\s+/g, ' ')
+                .replace(/ё/g, 'е');
+        }
+
+        // Check if answer matches any of the correct variants
+        function checkAnswer(userAnswer, correctAnswers) {
+            const normalized = normalizeAnswer(userAnswer);
+            const variants = correctAnswers.split('|').map(a => normalizeAnswer(a));
+            
+            return variants.some(variant => {
+                // Exact match
+                if (normalized === variant) return true;
+                
+                // Contains match for longer answers
+                if (variant.length > 10 && normalized.includes(variant)) return true;
+                
+                // Partial match for keywords (for multi-part answers)
+                const keywords = variant.split(',').map(k => k.trim()).filter(k => k);
+                if (keywords.length > 1) {
+                    const matchCount = keywords.filter(keyword => normalized.includes(keyword)).length;
+                    // Accept if at least 75% of keywords match
+                    return matchCount >= Math.ceil(keywords.length * 0.75);
+                }
+                
+                return false;
+            });
+        }
+
+        // Score tracking
+        let sectionScores = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+        let totalScore = 0;
+
+        // Check all answers
+        document.getElementById('checkAnswersBtn').addEventListener('click', function() {
+            const questions = document.querySelectorAll('.question');
+            sectionScores = {1: 0, 2: 0, 3: 0, 4: 0, 5: 0};
+            totalScore = 0;
+            let currentSection = 1;
+
+            questions.forEach((question) => {
+                const section = question.closest('[data-section]');
+                if (section) {
+                    currentSection = parseInt(section.dataset.section);
+                }
+
+                const points = parseFloat(question.dataset.points);
+                const correctAnswer = question.dataset.answer;
+                const feedback = question.querySelector('.feedback');
+                const questionLabel = question.querySelector('.question-label');
+                
+                let userAnswer = '';
+                let isCorrect = false;
+
+                // Checkbox questions (multiple choice) - CHECK FIRST!
+                if (correctAnswer === 'checkbox') {
+                    const correctIds = question.dataset.correct.split(',').map(id => id.trim());
+                    const checkedBoxes = Array.from(question.querySelectorAll('input[type="checkbox"]:checked'))
+                        .map(cb => cb.value);
+                    
+                    console.log('Checkbox check:', {
+                        correctIds: correctIds,
+                        checkedBoxes: checkedBoxes,
+                        question: questionLabel.textContent.substring(0, 50)
+                    });
+                    
+                    // Check if arrays are equal (same items, regardless of order)
+                    const sorted1 = correctIds.slice().sort();
+                    const sorted2 = checkedBoxes.slice().sort();
+                    isCorrect = sorted1.length === sorted2.length && 
+                                sorted1.every((val, idx) => val === sorted2[idx]);
+                    
+                    // Partial credit: calculate how many correct selections
+                    const correctSelections = checkedBoxes.filter(cb => correctIds.includes(cb)).length;
+                    const incorrectSelections = checkedBoxes.filter(cb => !correctIds.includes(cb)).length;
+                    
+                    console.log('Is correct:', isCorrect, 'sorted1:', sorted1, 'sorted2:', sorted2);
+                    console.log('Partial credit:', correctSelections, 'correct,', incorrectSelections, 'incorrect');
+                    
+                    userAnswer = checkedBoxes.length > 0 ? `${checkedBoxes.length} вариант(ов)` : '(не выбрано)';
+                }
+                // Select dropdown
+                else if (question.querySelector('select')) {
+                    const selectInput = question.querySelector('select');
+                    userAnswer = selectInput.value;
+                    isCorrect = normalizeAnswer(userAnswer) === normalizeAnswer(correctAnswer);
+                }
+                // Radio buttons
+                else if (question.querySelector('input[type="radio"]')) {
+                    const radioInput = question.querySelector('input[type="radio"]:checked');
+                    if (radioInput) {
+                        userAnswer = radioInput.value;
+                        isCorrect = normalizeAnswer(userAnswer) === normalizeAnswer(correctAnswer);
+                    }
+                }
+                // Text input
+                else if (question.querySelector('input[type="text"], textarea')) {
+                    const textInput = question.querySelector('input[type="text"], textarea');
+                    userAnswer = textInput.value;
+                    isCorrect = checkAnswer(userAnswer, correctAnswer);
+                }
+
+                // Add visual indicator to question label
+                const existingIndicator = questionLabel.querySelector('.answer-indicator');
+                if (existingIndicator) {
+                    existingIndicator.remove();
+                }
+
+                const indicator = document.createElement('span');
+                indicator.className = `answer-indicator ${isCorrect ? 'correct' : 'incorrect'}`;
+                indicator.innerHTML = isCorrect 
+                    ? `<svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/></svg> Верно`
+                    : `<svg fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/></svg> Неверно`;
+                questionLabel.appendChild(indicator);
+
+                // Update UI and score
+                if (isCorrect) {
+                    question.classList.add('correct');
+                    question.classList.remove('incorrect');
+                    feedback.className = 'feedback correct show';
+                    feedback.innerHTML = `
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <svg fill="currentColor" viewBox="0 0 20 20" style="width: 24px; height: 24px; flex-shrink: 0;">
+                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                            </svg>
+                            <span><strong>Верно!</strong> +${points} ${points === 1 ? 'балл' : points < 5 ? 'балла' : 'баллов'}</span>
+                        </div>
+                    `;
+                    sectionScores[currentSection] += points;
+                    totalScore += points;
+                } else {
+                    question.classList.add('incorrect');
+                    question.classList.remove('correct');
+                    feedback.className = 'feedback incorrect show';
+                    
+                    // For checkbox questions, show which options should be selected
+                    if (correctAnswer === 'checkbox') {
+                        const correctIds = question.dataset.correct.split(',');
+                        const correctLabels = correctIds.map(id => {
+                            const checkbox = question.querySelector(`#${id}`);
+                            return checkbox ? checkbox.nextElementSibling.textContent : id;
+                        });
+                        
+                        feedback.innerHTML = `
+                            <div style="display: flex; align-items: flex-start; gap: 10px;">
+                                <svg fill="currentColor" viewBox="0 0 20 20" style="width: 24px; height: 24px; flex-shrink: 0; margin-top: 2px;">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                </svg>
+                                <div style="flex: 1;">
+                                    <div><strong>Неверно.</strong> Вы выбрали ${userAnswer}</div>
+                                    <span class="correct-answer">✓ Правильные варианты (${correctIds.length}):<br>${correctLabels.map((label, i) => `${i + 1}. ${label}`).join('<br>')}</span>
+                                </div>
+                            </div>
+                        `;
+                    } else {
+                        const correctVariants = correctAnswer.split('|');
+                        const displayAnswer = correctVariants[0].charAt(0).toUpperCase() + correctVariants[0].slice(1);
+                        feedback.innerHTML = `
+                            <div style="display: flex; align-items: flex-start; gap: 10px;">
+                                <svg fill="currentColor" viewBox="0 0 20 20" style="width: 24px; height: 24px; flex-shrink: 0; margin-top: 2px;">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+                                </svg>
+                                <div style="flex: 1;">
+                                    <div><strong>Неверно.</strong> Ваш ответ: <em>"${userAnswer || '(не указан)'}"</em></div>
+                                    <span class="correct-answer">✓ Правильный ответ: ${displayAnswer}</span>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+            });
+
+            // Update progress
+            document.getElementById('currentScore').textContent = Math.round(totalScore);
+            document.getElementById('progressFill').style.width = '100%';
+            document.getElementById('progressText').textContent = '5/5';
+
+            // Show results immediately (don't hide questions)
+            showResults();
+            
+            // Scroll to results
+            setTimeout(() => {
+                document.getElementById('resultContainer').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 500);
+        });
+
+        function showResults() {
+            const percentage = (totalScore / 141) * 100;
+            let grade = '';
+            let gradeClass = '';
+            let feedbackText = '';
+
+            if (percentage >= 90) {
+                grade = 'ОТЛИЧНО';
+                gradeClass = 'excellent';
+                feedbackText = 'Превосходный результат! Вы полностью готовы к самостоятельной работе брокером. Глубокое знание регламента и воронки продаж.';
+            } else if (percentage >= 80) {
+                grade = 'ХОРОШО';
+                gradeClass = 'good';
+                feedbackText = 'Хороший результат! Есть небольшие пробелы в знаниях. Рекомендуется повторить отдельные блоки и пересдать тест.';
+            } else if (percentage >= 70) {
+                grade = 'УДОВЛЕТВОРИТЕЛЬНО';
+                gradeClass = 'satisfactory';
+                feedbackText = 'Удовлетворительно. Требуется дополнительное обучение по ключевым темам. Необходимо улучшить знание SLA и этапов воронки.';
+            } else {
+                grade = 'НЕУДОВЛЕТВОРИТЕЛЬНО';
+                gradeClass = 'unsatisfactory';
+                feedbackText = 'Результат ниже проходного балла. Необходимо полное переобучение. Рекомендуется внимательно изучить инструкцию брокера и пройти тест повторно.';
+            }
+
+            document.getElementById('finalScore').textContent = `${Math.round(totalScore)}/141`;
+            document.getElementById('gradeText').textContent = grade;
+            document.getElementById('gradeText').className = `result-grade ${gradeClass}`;
+            document.getElementById('feedbackText').textContent = feedbackText;
+
+            // Section scores
+            document.getElementById('score1').textContent = `${Math.round(sectionScores[1])}/16`;
+            document.getElementById('score2').textContent = `${Math.round(sectionScores[2])}/20`;
+            document.getElementById('score3').textContent = `${Math.round(sectionScores[3])}/15`;
+            document.getElementById('score4').textContent = `${Math.round(sectionScores[4])}/70`;
+            document.getElementById('score5').textContent = `${Math.round(sectionScores[5])}/20`;
+
+            // Show results container (but keep test sections visible)
+            document.getElementById('checkAnswersBtn').style.display = 'none';
+            document.getElementById('resultContainer').classList.add('show');
+        }
+
+        // Real-time progress update
+        document.querySelectorAll('input, textarea, select').forEach(input => {
+            input.addEventListener('change', updateProgress);
+            input.addEventListener('input', updateProgress);
+        });
+
+        function updateProgress() {
+            let answeredCount = 0;
+            
+            // Count text inputs and textareas
+            document.querySelectorAll('input[type="text"], textarea').forEach(input => {
+                if (input.value.trim() !== '') answeredCount++;
+            });
+
+            // Count select dropdowns
+            document.querySelectorAll('select').forEach(select => {
+                if (select.value !== '') answeredCount++;
+            });
+
+            // Count radio groups
+            const radioGroups = {};
+            document.querySelectorAll('input[type="radio"]:checked').forEach(radio => {
+                radioGroups[radio.name] = true;
+            });
+            answeredCount += Object.keys(radioGroups).length;
+
+            // Count checkbox groups (at least one checked)
+            const checkboxGroups = {};
+            document.querySelectorAll('input[type="checkbox"]:checked').forEach(checkbox => {
+                checkboxGroups[checkbox.name] = true;
+            });
+            answeredCount += Object.keys(checkboxGroups).length;
+
+            const totalQuestions = 42;
+            const completedSections = Math.floor((answeredCount / totalQuestions) * 5);
+            const progressPercent = (answeredCount / totalQuestions) * 100;
+
+            document.getElementById('progressFill').style.width = progressPercent + '%';
+            document.getElementById('progressText').textContent = `${completedSections}/5`;
+        }
+
+        // Scroll to first incorrect answer
+        function scrollToFirstError() {
+            const firstError = document.querySelector('.question.incorrect');
+            if (firstError) {
+                firstError.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                // Highlight it briefly
+                firstError.style.transform = 'scale(1.02)';
+                setTimeout(() => {
+                    firstError.style.transform = 'scale(1)';
+                }, 300);
+            }
+        }
+    </script>
+</body>
+</html>
