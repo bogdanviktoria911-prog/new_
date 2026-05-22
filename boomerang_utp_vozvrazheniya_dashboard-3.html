@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOOMERANG - Опрос УТП и Возражения</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #0a0e1a;
+            color: #e8eaf0;
+            padding: 20px;
+            line-height: 1.4;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #1a2332 0%, #2d3548 100%);
+            padding: 25px 30px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            border: 1px solid #3a4556;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 600;
+            color: #00d4ff;
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            color: #8b92a8;
+            font-size: 14px;
+        }
+
+        .respondent-block {
+            background: #141824;
+            border: 1px solid #2a3142;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 20px;
+        }
+
+        .respondent-name {
+            font-size: 20px;
+            font-weight: 600;
+            color: #00d4ff;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #2a3142;
+        }
+
+        .section {
+            margin-bottom: 25px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: #7c8cac;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .data-row {
+            background: #1a2030;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            border-left: 3px solid #3a4556;
+        }
+
+        .data-label {
+            font-size: 13px;
+            color: #8b92a8;
+            margin-bottom: 4px;
+        }
+
+        .data-value {
+            font-size: 14px;
+            color: #e8eaf0;
+            font-weight: 500;
+        }
+
+        .rating {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #2a3142;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }
+
+        .rating-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #00d4ff;
+        }
+
+        .rating-max {
+            font-size: 13px;
+            color: #6b7488;
+        }
+
+        .list-item {
+            background: #1a2030;
+            padding: 8px 12px;
+            margin-bottom: 5px;
+            border-radius: 4px;
+            font-size: 14px;
+            border-left: 2px solid #00d4ff;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .checkbox-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .checkbox-item {
+            background: #2a3142;
+            padding: 6px 12px;
+            border-radius: 5px;
+            font-size: 13px;
+            border: 1px solid #3a4556;
+        }
+
+        .checkbox-item.checked {
+            background: #1a4d5c;
+            border-color: #00d4ff;
+            color: #00d4ff;
+        }
+
+        @media (max-width: 768px) {
+            .grid-2 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>ОПРОС КОМАНДЫ ПРОДАЖ: УТП И РАБОТА С ВОЗРАЖЕНИЯМИ</h1>
+            <div class="subtitle">Дата заполнения: 20-22.05.2026 | Респондентов: 4</div>
+        </div>
+
+        <!-- РЕСПОНДЕНТ 1 -->
+        <div class="respondent-block">
+            <div class="respondent-name">Дмитрий Максимов</div>
+
+            <div class="section">
+                <div class="section-title">Топ-3 сложных возражения</div>
+                <div class="data-value">«Нужно подумать» / «Не готовы принимать решение», Просто интересуются, сравнивают варианты, Недоверие к лизхолду / юридическим схемам</div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Возражение 1: «Нужно подумать» / «Не готовы принимать решение»</div>
+                <div class="data-row">
+                    <div class="data-label">Ответ</div>
+                    <div class="data-value">- давайте честно, вижу, что остались какие-то непроясненные вопросы
+- ок, думайте, давайте тогда договоримся, что я вас через 2 дня наберу</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Уверенность</div>
+                    <div class="rating"><span class="rating-value">4</span><span class="rating-max">/ 5</span></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Удаётся ли закрывать</div>
+                    <div class="data-value">Иногда</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Возражение 2: Просто интересуются, сравнивают варианты</div>
+                <div class="data-row">
+                    <div class="data-label">Ответ</div>
+                    <div class="data-value">-отлично, мы 15 лет занимаемся недвижимостью, знаем рынок, подводные камни. Поможем сравнить</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Уверенность</div>
+                    <div class="rating"><span class="rating-value">3</span><span class="rating-max">/ 5</span></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Удаётся ли закрывать</div>
+                    <div class="data-value">Иногда</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Возражение 3: Недоверие к лизхолду / юридическим схемам</div>
+                <div class="data-row">
+                    <div class="data-label">Ответ</div>
+                    <div class="data-value">Лизхолд выгоден с точки зрения инвестиций, т.к. вход ниже, налоги ниже. Но если смущает лизхолд, то в Таиланде, в отличие от многих других стран, можно купить и во фрихолд</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Уверенность</div>
+                    <div class="rating"><span class="rating-value">4</span><span class="rating-max">/ 5</span></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Удаётся ли закрывать</div>
+                    <div class="data-value">Да</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Возражение, которое "ставит в тупик"</div>
+                <div class="data-row">
+                    <div class="data-value">Не сталкивался с таким</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Что делаете, когда не знаете ответ</div>
+                <div class="data-row">
+                    <div class="data-value">Импровизирую на ходу</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Как часто клиенты возвращаются с новыми возражениями</div>
+                <div class="data-row">
+                    <div class="data-value">Иногда</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Почему BOOMERANG — лучший выбор</div>
+                <div class="data-row">
+                    <div class="data-value">15 лет на рынке, 10 млн долларов собственных инвестиций, 1000+ сделок, ни одного недостроенного объекта, управление после продажи, закрываем весь спектр потребности клиента на острове</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Выгоды BOOMERANG (топ-5)</div>
+                <div class="checkbox-list">
+                    <div class="checkbox-item checked">✓ Полное сопровождение (от подбора до получения ключей)</div>
+                    <div class="checkbox-item checked">✓ Глубокое знание рынка Пхукета</div>
+                    <div class="checkbox-item checked">✓ Юридическая чистота / сопровождение</div>
+                    <div class="checkbox-item checked">✓ Эксклюзивные объекты</div>
+                    <div class="checkbox-item checked">✓ Инвестиционная выгода / ROI</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Уверенность в презентации УТП</div>
+                <div class="rating"><span class="rating-value">5</span><span class="rating-max">/ 5</span></div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Что мешает говорить убедительнее</div>
+                <div class="checkbox-list">
+                    <div class="checkbox-item checked">✓ Недостаточно кейсов / доказательств</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Навыки для отработки на тренинге</div>
+                <div class="data-row">
+                    <div class="data-value">Удерживать клиента в диалоге после отправки кп, навык живого общения, для быстрой импровизации в диалоге</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Полезный формат отработки</div>
+                <div class="checkbox-list">
+                    <div class="checkbox-item checked">✓ Ролевые игры с обратной связью</div>
+                    <div class="checkbox-item checked">✓ Готовые скрипты с объяснением логики</div>
+                    <div class="checkbox-item checked">✓ Групповой разбор сложных ситуаций</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Кейс для разбора на тренинге</div>
+                <div class="data-row">
+                    <div class="data-value">Нет</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- РЕСПОНДЕНТ 2 -->
+        <div class="respondent-block">
+            <div class="respondent-name">Анна</div>
+
+            <div class="section">
+                <div class="section-title">Топ-3 сложных возражения</div>
+                <div class="data-value">«Не интересно» / «Буду иметь в виду», Просто интересуются, сравнивают варианты, Квартира на продаже в России, ждут денег + Другое: доход от аренды НЕ 15% годовых</div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Возражение 1: «Не интересно» / «Буду иметь в виду»</div>
+                <div class="data-row">
+                    <div class="data-label">Ответ</div>
+                    <div class="data-value">Если честно так как вызывают вопросы то это самое сложное. Стараюсь узнать: что именно не интересно. данное предложение? Какое интереснее? (если уже смотрел клиент ещё) или рынок Пхукета или Таиланда в целом? (какое направление интереснее)</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Уверенность</div>
+                    <div class="rating"><span class="rating-value">2</span><span class="rating-max">/ 5</span></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Удаётся ли закрывать</div>
+                    <div class="data-value">Иногда</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Возражение 2: Просто интересуются, сравнивают варианты</div>
+                <div class="data-row">
+                    <div class="data-label">Ответ</div>
+                    <div class="data-value">Обычно пытаюсь выяснить "просто сравнивает" с чем? и там уже по ситуации. 1) либо с тем что другие агенты предложили. тогда узнаю что и обсуждаем (если клиент контактный). 2) либо с рынками в др. странах (тоже объясняю плюсы Таиланда стабильность итд). или 3) просто приценивается тогда в общих чертах обрисовываю ценовой порог. уточняю возможно ли рассмотрение в перспективе и удобно ли будет получать новости и предложения.</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Уверенность</div>
+                    <div class="rating"><span class="rating-value">2</span><span class="rating-max">/ 5</span></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Удаётся ли закрывать</div>
+                    <div class="data-value">Иногда</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Возражение 3: Квартира на продаже в России, ждут денег</div>
+                <div class="data-row">
+                    <div class="data-label">Ответ</div>
+                    <div class="data-value">Поставила потому что 4 пришлось выбрать. Уточняю стадию продажи. И в зависимости от этого строю общение дальше. если она уже на сделке - выбираем вариант и можем даже забронировать на 1-2 месяца что-то. если только в планах, то уточняю возможно ли рассмотрение в перспективе и удобно ли будет получать новости и предложения.</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Уверенность</div>
+                    <div class="rating"><span class="rating-value">4</span><span class="rating-max">/ 5</span></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Удаётся ли закрывать</div>
+                    <div class="data-value">Да</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Возражение 4 (Другое): Доход не 15%</div>
+                <div class="data-row">
+                    <div class="data-label">Ответ</div>
+                    <div class="data-value">Про доходность. Что не 15%. это факт. Пытаюсь объяснить про капитализацию, что это пассивный а не бизнес доход.</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Уверенность</div>
+                    <div class="rating"><span class="rating-value">3</span><span class="rating-max">/ 5</span></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Удаётся ли закрывать</div>
+                    <div class="data-value">Иногда</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Возражение, которое "ставит в тупик"</div>
+                <div class="data-row">
+                    <div class="data-value">Один раз было. Мой клиент. «У Вас тут ещё не такой уровень строительства и инфраструктуры как в Дубаи, при этом цена выше даже чем в Дубаи, за эти деньги нет вида на море и доход 8% (а у него реальный доход там оказывается 10%). и да это возможно исключение. но...»</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Что делаете, когда не знаете ответ</div>
+                <div class="data-row">
+                    <div class="data-value">Другое: Мы обсуждали тут отличия в природе и море и тд. и ценности Таиланда для арендаторов. Но всё равно именно под его запрос мы не нашли ничего.</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Как часто клиенты возвращаются с новыми возражениями</div>
+                <div class="data-row">
+                    <div class="data-value">Редко</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Почему BOOMERANG — лучший выбор</div>
+                <div class="data-row">
+                    <div class="data-value">Компания на рынке более 10 лет, более 6000 довольных клиентов, мощный синдикат: агентство по продаже, сервис по управлению, аренда транспорта, консъерж сервис, юридическое сопровождение клиента. Полный сервис от А до Я без посредников.</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Выгоды BOOMERANG (топ-8)</div>
+                <div class="checkbox-list">
+                    <div class="checkbox-item checked">✓ Юридическая чистота / сопровождение</div>
+                    <div class="checkbox-item checked">✓ Эксклюзивные объекты</div>
+                    <div class="checkbox-item checked">✓ Полное сопровождение</div>
+                    <div class="checkbox-item checked">✓ Инвестиционная выгода / ROI</div>
+                    <div class="checkbox-item checked">✓ Глубокое знание рынка Пхукета</div>
+                    <div class="checkbox-item checked">✓ Работа с лизхолдом и фрихолдом</div>
+                    <div class="checkbox-item checked">✓ Помощь с оплатой из РФ</div>
+                    <div class="checkbox-item checked">✓ Другое: Эксклюзивные договоренности с продавцами и застройщиками, более гибкие условия</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Уверенность в презентации УТП</div>
+                <div class="rating"><span class="rating-value">5</span><span class="rating-max">/ 5</span></div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Что мешает говорить убедительнее</div>
+                <div class="checkbox-list">
+                    <div class="checkbox-item checked">✓ Другое: нет ничего что мешает</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Навыки для отработки на тренинге</div>
+                <div class="data-row">
+                    <div class="data-value">Я лично хочу отработать первые звонки. Не стесняться звонить по телефонии. Нужны какие-то "скрипты". И возражения когда у клиента есть реальный опыт и мы ну действительно не можем на Пхукете это дать. Как продать клиенту мясо, если он агрессивный веган. Такие бывают. Это самый сложный момент. Если клиенту надо вид на море на 1й линии 3 спальни за 300,000 $. а у нас на 1й линии 4 этажа максимум и ещё и деревьями засажено и там нет вида. и стоимость х2. просто априори. ну это также как искать высотку на Пхукете. а это запрещено законом. вот эти возражения для меня боль</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Полезный формат отработки</div>
+                <div class="checkbox-list">
+                    <div class="checkbox-item checked">✓ Разбор реальных кейсов</div>
+                    <div class="checkbox-item checked">✓ Готовые скрипты с объяснением логики</div>
+                    <div class="checkbox-item checked">✓ Другое: личная помощь если клиент горячий (типа смены голоса)</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Кейс для разбора на тренинге</div>
+                <div class="data-row">
+                    <div class="data-value">Не могу сейчас сообразить кроме тех что выше описывала</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- РЕСПОНДЕНТ 3 -->
+        <div class="respondent-block">
+            <div class="respondent-name">Михайлова Анастасия</div>
+
+            <div class="section">
+                <div class="section-title">Топ-3 сложных возражения</div>
+                <div class="data-value">«Не интересно» / «Буду иметь в виду», «Нужно подумать» / «Не готовы принимать решение», Качество строительства (сравнение с другими странами)</div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Возражение 1: «Не интересно» / «Буду иметь в виду»</div>
+                <div class="data-row">
+                    <div class="data-label">Ответ</div>
+                    <div class="data-value">Хорошо, спасибо за ответ. Если в будущем появится интерес, обращайтесь, будем рады помочь.</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Уверенность</div>
+                    <div class="rating"><span class="rating-value">4</span><span class="rating-max">/ 5</span></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Удаётся ли закрывать</div>
+                    <div class="data-value">Иногда</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Возражение 2: «Нужно подумать» / «Не готовы принимать решение»</div>
+                <div class="data-row">
+                    <div class="data-label">Ответ</div>
+                    <div class="data-value">Хорошо. Скажите, пожалуйста, сколько Вам нужно времени и мы снова с Вами созвонимся. Но имейте ввиду, что предложение действует еще несколько дней и стоимость может возрасти.</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Уверенность</div>
+                    <div class="rating"><span class="rating-value">2</span><span class="rating-max">/ 5</span></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Удаётся ли закрывать</div>
+                    <div class="data-value">Редко</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Возражение 3: Качество строительства (сравнение с другими странами)</div>
+                <div class="data-row">
+                    <div class="data-label">Ответ</div>
+                    <div class="data-value">Конечно есть проекты с плохим качеством строительства, как и любой другой стране, но также есть и проекты высокого качества строительства и мы как раз можем их вам показать.</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Уверенность</div>
+                    <div class="rating"><span class="rating-value">3</span><span class="rating-max">/ 5</span></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Удаётся ли закрывать</div>
+                    <div class="data-value">Иногда</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Возражение, которое "ставит в тупик"</div>
+                <div class="data-row">
+                    <div class="data-value">Сейчас выгоднее и безопаснее вкладываться в Россию.</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Что делаете, когда не знаете ответ</div>
+                <div class="data-row">
+                    <div class="data-value">Перевожу разговор на другую тему</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Как часто клиенты возвращаются с новыми возражениями</div>
+                <div class="data-row">
+                    <div class="data-value">Часто</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Почему BOOMERANG — лучший выбор</div>
+                <div class="data-row">
+                    <div class="data-value">Boomerang - это надежная компания, на рынке недвижимости работает 14 лет. Мы не просто помогаем приобрести недвижимость, но и берем ее под управление, также у нас есть консьерж-сервис, аренда авто, и рестораны.</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Выгоды BOOMERANG (топ-5)</div>
+                <div class="checkbox-list">
+                    <div class="checkbox-item checked">✓ Юридическая чистота / сопровождение</div>
+                    <div class="checkbox-item checked">✓ Эксклюзивные объекты</div>
+                    <div class="checkbox-item checked">✓ Полное сопровождение</div>
+                    <div class="checkbox-item checked">✓ Глубокое знание рынка Пхукета</div>
+                    <div class="checkbox-item checked">✓ Работа с лизхолдом и фрихолдом</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Уверенность в презентации УТП</div>
+                <div class="rating"><span class="rating-value">5</span><span class="rating-max">/ 5</span></div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Что мешает говорить убедительнее</div>
+                <div class="checkbox-list">
+                    <div class="checkbox-item checked">✓ Не до конца понимаю отличия от конкурентов</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Навыки для отработки на тренинге</div>
+                <div class="data-row">
+                    <div class="data-value">Научиться отвечать на возражения</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Полезный формат отработки</div>
+                <div class="checkbox-list">
+                    <div class="checkbox-item checked">✓ Готовые скрипты с объяснением логики</div>
+                    <div class="checkbox-item checked">✓ Групповой разбор сложных ситуаций</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Кейс для разбора на тренинге</div>
+                <div class="data-row">
+                    <div class="data-value">Нет</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- РЕСПОНДЕНТ 4 -->
+        <div class="respondent-block">
+            <div class="respondent-name">Елена Паськова</div>
+
+            <div class="section">
+                <div class="section-title">Топ-3 сложных возражения + Другое</div>
+                <div class="data-value">Недоверие к лизхолду / юридическим схемам, Квартира на продаже в России, ждут денег, Дорого / дороже, чем ожидали + Другое: Вопрос с визами, вопрос как перепродать потом</div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Возражение 1: Недоверие к лизхолду / юридическим схемам</div>
+                <div class="data-row">
+                    <div class="data-label">Ответ</div>
+                    <div class="data-value">Я обычно отвечаю что в Таиланде действует английское право и также как в Англии земля предоставляется в аренду на 30 лет, если ты гражданин другой стороны дом а ты можешь оформить freehold если у тебя есть какие-то сомнения по поводу оформления такую собственность то мы можем разбирать зато мы можем выбирать варианты только апартаментов квартир которые будут оформлены стопроцентную собственность тебя ты с этими апартаментами можешь все что угодно делать продавать дарить передавать по наследству это полная стоимость стопроцентное твоё имя это всё регистрируется в офисы и выдается такой же идентично как наши в России свидетельство о регистрации, чанот. И тут важный момент чтобы застройщик которого вы убираете был надёжный поэтому мы проверяем все документы по застройщику а лучше работать с крупными большими компаниями которых есть большой большой опыт и им есть что терять</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Уверенность</div>
+                    <div class="rating"><span class="rating-value">4</span><span class="rating-max">/ 5</span></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Удаётся ли закрывать</div>
+                    <div class="data-value">Да</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Возражение 2: Дорого / дороже, чем ожидали</div>
+                <div class="data-row">
+                    <div class="data-label">Ответ</div>
+                    <div class="data-value">Надо понять почему дорого допустим если не изучали рынок этой европейцы бывают думают что Таиланд это какая-то страна третьего мира и тут под пальмами люди живут то можно сказать обычно говорю что это уже развитая инфраструктура которая всё становится богаче и богаче здесь приезжают люди со всего мира аренда растёт но так как не так много уголков на земле у нас остается где можно комфортно отдыхать и жить поэтому Таиланд соответственно да повышаются цены ну и уровень жизни качества жизни тоже повышается. Второй момент получается если это русские то понятно что доллары у нас вырос рубль упал и нам везде дорого ну и смотря чем сравнивать если сравнивать с ценами Москва и Сочи то вполне себе адекватно поэтому тут с чем-то с чем сравнивать и выяснять конкретно почему дорого человеку делай сравнительный анализ делать делать там доходность насколько цена вырастет там так подобное</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Уверенность</div>
+                    <div class="rating"><span class="rating-value">4</span><span class="rating-max">/ 5</span></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Удаётся ли закрывать</div>
+                    <div class="data-value">Иногда</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Возражение 3: Квартира на продаже в России, ждут денег</div>
+                <div class="data-row">
+                    <div class="data-label">Ответ</div>
+                    <div class="data-value">Ну тут вопрос я выясняю что за объект как они считаются гастро он труда ся и тут такой вариант может продаваться там месяц может быть год продаваться но в любом случае мы рассмотрим я предложу рассмотреть проекты где какой-то минимальный взнос если у них есть на первый платёж то это прекрасное если есть случайно на второй платёж что это обще замечательный можно в спокойном режиме продавать квартиру и уже сейчас зафиксировать цену ту которая предлагается на прицеле застройщика</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Уверенность</div>
+                    <div class="rating"><span class="rating-value">4</span><span class="rating-max">/ 5</span></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Удаётся ли закрывать</div>
+                    <div class="data-value">Иногда</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Возражение 4 (Другое): Вопрос с визами, и как потом перепродать объект</div>
+                <div class="data-row">
+                    <div class="data-label">Ответ</div>
+                    <div class="data-value">Вопрос с визами закрываются так что сейчас вашей Таиланда идут навстречу для людей которые хотят инвестировать есть от маленьких бюджета от 3 000 000, там же есть очень крутые визы которые можно получить если тестируешь пятиста 1000 1000 $ в Таиланд Mitsu на 10 лет вот такие есть истории которые сейчас можно предлагать инвестором а по поводу того что нельзя перепродать да действительно сейчас время вторичное недвижимость он в принципе появился на Пхукете и пока ещё не понимает там что с ним делать но актив ВНА начали в последнее время покупать вторичку и европейские и также и русские и я думаю что Новому Году 2026-м когда будут сезон цены повысится и царица будет хорошо уходить и самое главное в детстве очень тщательно выбирать объект потому что первая конечно это должна быть ликвидность и мы всегда выбираем с клиентами объекты те которые деньги с пиццей так чтобы мы могли их потом легко перепродать</div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Уверенность</div>
+                    <div class="rating"><span class="rating-value">4</span><span class="rating-max">/ 5</span></div>
+                </div>
+                <div class="data-row">
+                    <div class="data-label">Удаётся ли закрывать</div>
+                    <div class="data-value">Иногда</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Возражение, которое "ставит в тупик"</div>
+                <div class="data-row">
+                    <div class="data-value">Как будет проходить продление лист Hold земли и квартир и а что если допустим не продлят</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Что делаете, когда не знаете ответ</div>
+                <div class="data-row">
+                    <div class="data-value">Другое: Ну я говорю что все должно быть хорошо не на самом деле что претендентов не было и поэтому нету нету практики которую я бы могла показать рынок новый но у надёжных застройщиках всё всё хорошо</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Как часто клиенты возвращаются с новыми возражениями</div>
+                <div class="data-row">
+                    <div class="data-value">Иногда</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Почему BOOMERANG — лучший выбор</div>
+                <div class="data-row">
+                    <div class="data-value">Компания давно на рынке. Сама лично живу 7 лет на Пхукете, компания Бумераг полного цикла Продажа и управление недвижимостью, авто, консьерж сервис. Мы относимся к деньгам инвестора как к своим</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Выгоды BOOMERANG (топ-5)</div>
+                <div class="checkbox-list">
+                    <div class="checkbox-item checked">✓ Юридическая чистота / сопровождение</div>
+                    <div class="checkbox-item checked">✓ Полное сопровождение</div>
+                    <div class="checkbox-item checked">✓ Помощь с оплатой из РФ</div>
+                    <div class="checkbox-item checked">✓ Глубокое знание рынка Пхукета</div>
+                    <div class="checkbox-item checked">✓ Инвестиционная выгода / ROI</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Уверенность в презентации УТП</div>
+                <div class="rating"><span class="rating-value">4</span><span class="rating-max">/ 5</span></div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Что мешает говорить убедительнее</div>
+                <div class="checkbox-list">
+                    <div class="checkbox-item checked">✓ Не до конца понимаю отличия от конкурентов</div>
+                    <div class="checkbox-item checked">✓ Нет готовых речевых модулей</div>
+                    <div class="checkbox-item checked">✓ Не знаю, как "упаковать" наши сильные стороны</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Навыки для отработки на тренинге</div>
+                <div class="data-row">
+                    <div class="data-value">Презентация себя и компании, удержание клиента после отправки варианта</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Полезный формат отработки</div>
+                <div class="checkbox-list">
+                    <div class="checkbox-item checked">✓ Разбор реальных кейсов</div>
+                    <div class="checkbox-item checked">✓ Готовые скрипты с объяснением логики</div>
+                    <div class="checkbox-item checked">✓ Ролевые игры с обратной связью</div>
+                    <div class="checkbox-item checked">✓ Групповой разбор сложных ситуаций</div>
+                </div>
+            </div>
+
+            <div class="section">
+                <div class="section-title">Кейс для разбора на тренинге</div>
+                <div class="data-row">
+                    <div class="data-value">Нет</div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
