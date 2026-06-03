@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Организационная структура BOOMERANG Real Estate</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #0a0e27;
+            color: #e0e0e0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #00d4ff;
+            margin-bottom: 10px;
+            font-size: 32px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #888;
+            margin-bottom: 40px;
+            font-size: 14px;
+        }
+
+        .tabs {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+            flex-wrap: wrap;
+        }
+
+        .tab {
+            padding: 12px 30px;
+            background: rgba(0, 212, 255, 0.1);
+            border: 1px solid #00d4ff;
+            color: #00d4ff;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+
+        .tab:hover {
+            background: rgba(0, 212, 255, 0.2);
+        }
+
+        .tab.active {
+            background: #00d4ff;
+            color: #0a0e27;
+        }
+
+        .structure-view {
+            display: none;
+        }
+
+        .structure-view.active {
+            display: block;
+        }
+
+        .org-chart {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0;
+            position: relative;
+        }
+
+        .level {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+            width: 100%;
+            position: relative;
+            margin-bottom: 60px;
+        }
+
+        .level-single {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 60px;
+        }
+
+        .box {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.15), rgba(0, 150, 200, 0.1));
+            border: 1px solid #00d4ff;
+            padding: 20px;
+            min-width: 200px;
+            max-width: 280px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Вертикальные линии от бокса вниз */
+        .box::after {
+            content: '';
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            width: 2px;
+            height: 40px;
+            background: rgba(0, 212, 255, 0.4);
+            transform: translateX(-50%);
+        }
+
+        .box.no-line::after {
+            display: none;
+        }
+
+        /* Горизонтальная линия между подчиненными */
+        .level::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            left: 25%;
+            right: 25%;
+            height: 2px;
+            background: rgba(0, 212, 255, 0.4);
+        }
+
+        .level.no-line::before {
+            display: none;
+        }
+
+        .level-single::before {
+            display: none;
+        }
+
+        .box.ceo {
+            background: linear-gradient(135deg, rgba(255, 100, 0, 0.25), rgba(200, 50, 0, 0.2));
+            border: 2px solid #ff6400;
+            box-shadow: 0 8px 32px rgba(255, 100, 0, 0.3);
+            min-width: 280px;
+            max-width: 350px;
+        }
+
+        .box.ceo .position-title {
+            color: #ff6400;
+            font-size: 15px;
+        }
+
+        .box.ceo .person-name {
+            font-size: 20px;
+            color: #fff;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .founder-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            background: linear-gradient(135deg, rgba(255, 100, 0, 0.3), rgba(200, 50, 0, 0.2));
+            border: 1px solid #ff6400;
+            color: #ff6400;
+            font-size: 11px;
+            margin-top: 10px;
+            text-transform: uppercase;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+        .box.head {
+            background: linear-gradient(135deg, rgba(0, 212, 255, 0.2), rgba(0, 150, 200, 0.15));
+            border-color: #00d4ff;
+        }
+
+        .box.manager {
+            background: linear-gradient(135deg, rgba(100, 255, 100, 0.15), rgba(50, 200, 50, 0.1));
+            border-color: #64ff64;
+        }
+
+        .box.specialist {
+            background: linear-gradient(135deg, rgba(200, 200, 200, 0.1), rgba(150, 150, 150, 0.05));
+            border-color: #888;
+        }
+
+        .position-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #00d4ff;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .box.ceo .position-title {
+            color: #ff6400;
+        }
+
+        .box.manager .position-title {
+            color: #64ff64;
+        }
+
+        .box.specialist .position-title {
+            color: #aaa;
+        }
+
+        .person-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: #fff;
+            margin-bottom: 10px;
+        }
+
+        .person-details {
+            font-size: 12px;
+            color: #999;
+            line-height: 1.6;
+        }
+
+        .person-details div {
+            margin-bottom: 4px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            background: rgba(0, 212, 255, 0.2);
+            border: 1px solid #00d4ff;
+            color: #00d4ff;
+            font-size: 10px;
+            margin-top: 8px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .badge.new {
+            background: rgba(100, 255, 100, 0.2);
+            border-color: #64ff64;
+            color: #64ff64;
+        }
+
+        .badge.hire {
+            background: rgba(255, 200, 0, 0.2);
+            border-color: #ffc800;
+            color: #ffc800;
+        }
+
+        .department {
+            background: rgba(255, 255, 255, 0.03);
+            border: 2px solid rgba(0, 212, 255, 0.3);
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+        }
+
+        .department-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #00d4ff;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-align: center;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 212, 255, 0.3);
+        }
+
+        .department-head {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .subsection {
+            margin-top: 40px;
+            position: relative;
+        }
+
+        .subsection::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            width: 2px;
+            height: 40px;
+            background: rgba(0, 212, 255, 0.4);
+            transform: translateX(-50%);
+        }
+
+        .notes {
+            background: rgba(255, 200, 0, 0.1);
+            border-left: 4px solid #ffc800;
+            padding: 20px;
+            margin-top: 40px;
+        }
+
+        .notes-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #ffc800;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+
+        .notes ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .notes li {
+            padding: 8px 0;
+            color: #ccc;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .notes li::before {
+            content: "▸ ";
+            color: #ffc800;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .metric {
+            display: inline-block;
+            padding: 4px 10px;
+            background: rgba(0, 212, 255, 0.15);
+            border-radius: 3px;
+            font-size: 11px;
+            color: #00d4ff;
+            margin-top: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .level {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .box {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Организационная структура BOOMERANG Real Estate</h1>
+        <div class="subtitle">Группа компаний основана в 2011 году • Phuket, Thailand • Real Estate | Rental | Concierge | Restaurants</div>
+
+        <div class="tabs"><div class="tab active">Переходная структура</div></div>
+
+        <div id="transition" class="structure-view active">
+            <div class="org-chart">
+                                <!-- CEO и партнеры -->
+                <div class="level-single">
+                    <div class="box ceo">
+                        <div class="position-title">Основатель / Собственник</div>
+                        <div class="person-name">Елена Паськова</div>
+                        <div class="person-details">
+                            <div><strong>Co-Founder & CEO</strong> / Лицо бренда BOOMERANG</div>
+                            <div>Стратегическое развитие группы компаний</div>
+                            <div>VIP-клиенты и ключевые сделки</div>
+                            <div>Корпоративная культура и ценности</div>
+                            <div>Стратегические решения</div>
+                            <div>Развитие бизнеса и инвестиции</div>
+                            <div>Партнерства и альянсы</div>
+                        </div>
+                        <div class="founder-badge">14+ лет в бизнесе</div>
+                    </div>
+                </div>
+
+                <!-- Департамент продаж -->
+                <div class="department">
+                    <div class="department-title">Департамент продаж</div>
+                    <div class="department-head">
+                        <div class="box head">
+                            <div class="position-title">Head of Sales</div>
+                            <div class="person-name">НАЙМ</div>
+                            <div class="person-details">
+                                <div>Управление командой продаж</div>
+                                <div>Развитие процессов</div>
+                                <div>Контроль конверсии и метрик</div>
+                            </div>
+                            <div class="badge hire">Требуется найм</div>
+                        </div>
+                    </div>
+
+                    <div class="level no-line">
+                        <div class="box manager no-line">
+                            <div class="position-title">Senior Sales / Closer</div>
+                            <div class="person-name">Анна Шляпина</div>
+                            <div class="person-details">
+                                <div>Закрытие сделок</div>
+                                <div>Наставничество junior</div>
+                                <div>Работа с VIP-клиентами</div>
+                            </div>
+                        </div>
+
+                        <div class="box specialist no-line">
+                            <div class="position-title">Специалист по продукту и операциям</div>
+                            <div class="person-name">Екатерина Салтан</div>
+                            <div class="person-details">
+                                <div>Операционные вопросы</div>
+                                <div>Продуктовая экспертиза</div>
+                                <div>Поддержка команды</div>
+                            </div>
+                            <div class="badge">Новая роль</div>
+                        </div>
+
+                        <div class="box specialist no-line">
+                            <div class="position-title">Sales Manager</div>
+                            <div class="person-name">НАЙМ #1</div>
+                            <div class="person-details">
+                                <div>Полный цикл сделки</div>
+                                <div>Работа с клиентами</div>
+                            </div>
+                            <div class="badge hire">Требуется найм</div>
+                        </div>
+
+                        <div class="box specialist no-line">
+                            <div class="position-title">International Sales</div>
+                            <div class="person-name">НАЙМ (билингв)</div>
+                            <div class="person-details">
+                                <div>Англоязычные клиенты</div>
+                                <div>Международное направление</div>
+                            </div>
+                            <div class="badge hire">Требуется найм</div>
+                        </div>
+
+                        <div class="box specialist no-line">
+                            <div class="position-title">International Sales (part-time)</div>
+                            <div class="person-name">Диего</div>
+                            <div class="person-details">
+                                <div>Международное направление</div>
+                                <div>Англоязычные клиенты</div>
+                            </div>
+                            <div class="badge">Part-time</div>
+                        </div>
+
+                        <div class="box specialist no-line">
+                            <div class="position-title">Специалист квалификации</div>
+                            <div class="person-name">Анастасия Михайлова</div>
+                            <div class="person-details">
+                                <div>Квалификация входящих (RU)</div>
+                                <div>Передача в продажи</div>
+                            </div>
+                        </div>
+
+                        <div class="box specialist no-line">
+                            <div class="position-title">Специалист квалификации</div>
+                            <div class="person-name">Нурказахова Аружан</div>
+                            <div class="person-details">
+                                <div>Квалификация входящих (EN/RU)</div>
+                                <div>Международные лиды</div>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Департамент партнерской сети -->
+                <div class="department">
+                    <div class="department-title">Департамент партнерской сети</div>
+                    <div class="department-head">
+                        <div class="box head">
+                            <div class="position-title">Руководитель партнерской сети</div>
+                            <div class="person-name">Дмитрий Максимов</div>
+                            <div class="person-details">
+                                <div>Развитие партнерских сетей</div>
+                                <div>Привлечение брокеров</div>
+                                <div>Партнерские программы</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="level no-line">
+                        <div class="box specialist no-line">
+                            <div class="position-title">Партнерская сеть</div>
+                            <div class="person-details">
+                                <div>3-5+ партнеров</div>
+                                <div>Привлечение лидов</div>
+                                <div>Комиссионная модель</div>
+                            </div>
+                            <div class="badge new">Расширение сети</div>
+                        </div>
+                    </div>
+                </div>
+
+                                <!-- Департамент маркетинга -->
+                <div class="department">
+                    <div class="department-title">Департамент маркетинга (подчинение партнерам)</div>
+                    <div class="level no-line">
+                        <div class="box specialist no-line">
+                            <div class="position-title">SMM-специалист</div>
+                            <div class="person-name">Екатерина</div>
+                            <div class="person-details">
+                                <div>Разработка стратегии продвижения</div>
+                                <div>Составление контент-планов</div>
+                                <div>Координация команды и постановка ТЗ</div>
+                                <div>Проработка идей контента</div>
+                            </div>
+                        </div>
+
+                        <div class="box specialist no-line">
+                            <div class="position-title">Дизайнер</div>
+                            <div class="person-name">Михаил</div>
+                            <div class="person-details">
+                                <div>Создание карточек и обложек</div>
+                                <div>Визуальная концепция аккаунтов</div>
+                                <div>Лендинги и оформление страниц</div>
+                            </div>
+                        </div>
+
+                        <div class="box specialist no-line">
+                            <div class="position-title">Оператор</div>
+                            <div class="person-name">Александр</div>
+                            <div class="person-details">
+                                <div>Съемка: выставление кадра, процесс</div>
+                                <div>Фотосъёмка объектов недвижимости</div>
+                                <div>Монтаж (временно)</div>
+                            </div>
+                        </div>
+
+                        <div class="box specialist no-line">
+                            <div class="position-title">Подряд по лидгену</div>
+                            <div class="person-details">
+                                <div>Таргетированная реклама</div>
+                                <div>Настройка кампаний</div>
+                            </div>
+                            <div class="badge">Аутсорс</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Техническая поддержка и консультанты -->
+                <div class="department">
+                    <div class="department-title">Техническая поддержка и консультанты (подчинение партнерам)</div>
+                    <div class="level no-line">
+                        <div class="box specialist no-line">
+                            <div class="position-title">Технический консультант CRM</div>
+                            <div class="person-details">
+                                <div>Настройка AmoCRM</div>
+                                <div>Техническая поддержка</div>
+                                <div>Консультирование команды</div>
+                            </div>
+                            <div class="badge">Аутсорс</div>
+                        </div>
+
+                        <div class="box specialist no-line">
+                            <div class="position-title">Аутсорсинг консультантов</div>
+                            <div class="person-details">
+                                <div>Операционная экспертиза</div>
+                            </div>
+                            <div class="badge">Аутсорс</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <script>
+        function showStructure(id) {
+            // Скрыть все структуры
+            document.querySelectorAll('.structure-view').forEach(view => {
+                view.classList.remove('active');
+            });
+            
+            // Деактивировать все табы
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Показать выбранную структуру
+            document.getElementById(id).classList.add('active');
+            
+            // Активировать выбранный таб
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
