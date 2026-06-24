@@ -1,0 +1,847 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Районы Пхукета — BOOMERANG Real Estate</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Playfair+Display:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --navy: #134074; --navy-dark: #0d2d52; --gold: #c9a84c;
+  --cream: #faf8f4; --white: #fff;
+  --text-main: #1a1a1a; --text-muted: #6b7280; --text-light: #9ca3af;
+  --border: #e5e7eb;
+  --plus-bg: #edf7f0; --plus-text: #1a6b3c;
+  --minus-bg: #fef2f2; --minus-text: #991b1b;
+  --info-bg: #eff6ff; --info-text: #1d4ed8;
+}
+body { font-family: 'Inter', sans-serif; background: var(--cream); color: var(--text-main); min-height: 100vh; }
+
+.hero { background: var(--navy); padding: 44px 40px 36px; position: relative; overflow: hidden; }
+.hero::before { content:''; position:absolute; top:-60px; right:-60px; width:300px; height:300px; border-radius:50%; background:rgba(201,168,76,.12); }
+.hero::after  { content:''; position:absolute; bottom:-80px; left:30%; width:200px; height:200px; border-radius:50%; background:rgba(201,168,76,.07); }
+.hero-inner { max-width:1000px; margin:0 auto; position:relative; z-index:1; display:flex; align-items:flex-start; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+.hero-text { flex:1; min-width:280px; }
+.brand-logo { display:flex; align-items:center; gap:10px; margin-bottom:16px; }
+.brand-logo img { height:32px; width:auto; flex-shrink:0; }
+.brand-logo-text { display:flex; flex-direction:column; line-height:1.05; }
+.brand-logo-name { font-family:'Inter',sans-serif; font-size:18px; font-weight:600; color:#fff; letter-spacing:-0.01em; }
+.brand-logo-sub { font-family:'Inter',sans-serif; font-size:10px; font-weight:500; color:rgba(255,255,255,.55); letter-spacing:.04em; text-transform:lowercase; }
+.hero-eyebrow { font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:rgba(255,255,255,.4); font-weight:500; margin-bottom:18px; }
+.hero h1 { font-family:'Playfair Display',serif; font-size:clamp(26px,3.8vw,44px); font-weight:600; color:#fff; line-height:1.2; margin-bottom:14px; }
+.hero-sub { font-size:14px; color:rgba(255,255,255,.62); max-width:500px; line-height:1.75; margin-bottom:16px; }
+.hero-stats { display:flex; gap:36px; flex-wrap:wrap; }
+.stat-num { font-family:'Playfair Display',serif; font-size:26px; font-weight:600; color:var(--gold); line-height:1; }
+.stat-label { font-size:11px; color:rgba(255,255,255,.45); margin-top:3px; }
+
+.lang-toggle { display:flex; gap:6px; align-self:flex-start; }
+.lang-btn { font-family:'Inter',sans-serif; font-size:12px; font-weight:600; padding:6px 14px; border-radius:20px; border:1.5px solid rgba(255,255,255,.3); background:transparent; color:rgba(255,255,255,.6); cursor:pointer; transition:all .18s; letter-spacing:.04em; }
+.lang-btn.active { background:var(--gold); border-color:var(--gold); color:#fff; }
+.lang-btn:hover:not(.active) { border-color:var(--gold); color:var(--gold); }
+
+.map-section { max-width:1000px; margin:36px auto 0; padding:0 20px; }
+.section-eyebrow { font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:var(--text-light); font-weight:600; margin-bottom:12px; }
+.map-wrap { border-radius:16px; overflow:hidden; border:1px solid var(--border); box-shadow:0 4px 20px rgba(19,64,116,.08); position:relative; }
+#map { height:500px; width:100%; }
+.map-reset-btn {
+  position:absolute; top:12px; right:12px; z-index:401;
+  background:#fff; border:1px solid var(--border); border-radius:8px;
+  font-family:'Inter',sans-serif; font-size:12px; font-weight:500; color:var(--navy);
+  padding:7px 13px; cursor:pointer; box-shadow:0 2px 8px rgba(0,0,0,.12);
+  display:flex; align-items:center; gap:5px; transition:all .15s;
+}
+.map-reset-btn:hover { background:var(--cream); }
+
+.leaflet-popup-content-wrapper { border-radius:12px!important; box-shadow:0 8px 32px rgba(19,64,116,.2)!important; padding:0!important; overflow:hidden; border:none!important; min-width:280px; }
+.leaflet-popup-content { margin:0!important; width:auto!important; }
+.leaflet-popup-tip { background:#fff!important; }
+.leaflet-popup-close-button { color:rgba(255,255,255,.7)!important; font-size:18px!important; top:8px!important; right:10px!important; z-index:10; }
+.popup-inner { font-family:'Inter',sans-serif; }
+.popup-head { background:var(--navy); padding:14px 40px 12px 16px; }
+.popup-coast { font-size:9px; text-transform:uppercase; letter-spacing:.1em; color:var(--gold); font-weight:600; margin-bottom:4px; }
+.popup-name { font-size:15px; font-weight:600; color:#fff; margin-bottom:2px; }
+.popup-sub { font-size:11px; color:rgba(255,255,255,.55); }
+.popup-roi { display:inline-block; margin-top:8px; font-size:11px; font-weight:600; padding:3px 10px; border-radius:6px; }
+.p-roi-high { background:var(--gold); color:#fff; }
+.p-roi-mid  { background:rgba(201,168,76,.35); color:#fff; }
+.p-roi-low  { background:rgba(255,255,255,.2); color:rgba(255,255,255,.85); }
+.popup-body { padding:12px 16px 14px; background:#fff; }
+.popup-grid { display:grid; grid-template-columns:1fr 1fr; gap:8px 12px; margin-bottom:10px; }
+.popup-meta-label { font-size:9px; text-transform:uppercase; letter-spacing:.07em; color:var(--text-light); font-weight:600; }
+.popup-meta-value { font-size:12px; font-weight:500; color:var(--text-main); margin-top:1px; }
+.popup-tags { display:flex; flex-wrap:wrap; gap:4px; margin-top:10px; padding-top:10px; border-top:1px solid var(--border); }
+.ptag { font-size:10px; padding:2px 8px; border-radius:5px; line-height:1.5; }
+.ptag-plus  { background:var(--plus-bg); color:var(--plus-text); }
+.ptag-minus { background:var(--minus-bg); color:var(--minus-text); }
+.popup-note { margin-top:8px; font-size:11px; color:var(--text-muted); line-height:1.5; font-style:italic; }
+
+.main { max-width:1000px; margin:0 auto; padding:36px 20px 60px; }
+.filter-bar { display:flex; align-items:center; flex-wrap:wrap; gap:8px; margin-bottom:28px; }
+.filter-group-label { font-size:10px; text-transform:uppercase; letter-spacing:.1em; color:var(--text-light); font-weight:600; margin-right:4px; white-space:nowrap; }
+.filter-btn { font-family:'Inter',sans-serif; font-size:12px; padding:6px 14px; border-radius:20px; border:1px solid var(--border); background:var(--white); color:var(--text-muted); cursor:pointer; transition:all .18s; }
+.filter-btn:hover { border-color:var(--navy); color:var(--navy); }
+.filter-btn.active { background:var(--navy); border-color:var(--navy); color:#fff; }
+.filter-btn.coast-w.active { background:#0e6ba8; border-color:#0e6ba8; }
+.filter-btn.coast-e.active { background:#5c7a6b; border-color:#5c7a6b; }
+
+.grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px,1fr)); gap:16px; }
+.card { background:var(--white); border:1px solid var(--border); border-radius:14px; padding:18px 20px; display:flex; flex-direction:column; transition:transform .18s, box-shadow .18s, border-color .18s; cursor:pointer; }
+.card:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(19,64,116,.1); }
+.card.hidden { display:none; }
+.card.highlighted { border-color:var(--navy); box-shadow:0 0 0 2px var(--navy); }
+.card-coast-badge { font-size:9px; font-weight:600; letter-spacing:.08em; text-transform:uppercase; padding:2px 8px; border-radius:4px; display:inline-block; margin-bottom:8px; }
+.badge-west { background:#e0f0fb; color:#0e6ba8; }
+.badge-east { background:#e5f2ec; color:#3a7a5a; }
+.card-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:12px; }
+.card-name { font-size:15px; font-weight:600; color:var(--text-main); line-height:1.3; }
+.card-sub  { font-size:11px; color:var(--text-light); margin-top:2px; }
+.roi-badge { font-size:11px; font-weight:600; padding:4px 10px; border-radius:8px; white-space:nowrap; flex-shrink:0; }
+.roi-high { background:var(--navy); color:#fff; }
+.roi-mid  { background:var(--gold); color:#fff; }
+.roi-low  { background:#e5e7eb; color:#6b7280; }
+.tags-label { font-size:10px; text-transform:uppercase; letter-spacing:.08em; color:var(--text-light); font-weight:600; margin-bottom:5px; margin-top:10px; }
+.tag-row { display:flex; flex-wrap:wrap; gap:4px; margin-bottom:4px; }
+.tag { font-size:11px; padding:3px 9px; border-radius:6px; line-height:1.4; }
+.tag-plus  { background:var(--plus-bg);  color:var(--plus-text); }
+.tag-minus { background:var(--minus-bg); color:var(--minus-text); }
+.card-note { margin-top:10px; font-size:11px; color:var(--text-muted); font-style:italic; line-height:1.5; }
+.card-meta { display:grid; grid-template-columns:1fr 1fr; gap:8px 12px; padding-top:12px; border-top:1px solid var(--border); margin-top:14px; }
+.meta-label { font-size:9px; text-transform:uppercase; letter-spacing:.07em; color:var(--text-light); font-weight:600; }
+.meta-value { font-size:12px; font-weight:500; color:var(--text-main); margin-top:1px; }
+
+.disclaimer { margin-top:36px; padding:14px 18px; background:var(--white); border:1px solid var(--border); border-left:3px solid var(--gold); border-radius:8px; font-size:12px; color:var(--text-muted); line-height:1.65; }
+footer { background:var(--navy-dark,#0d2d52); text-align:center; padding:22px 20px; font-size:12px; color:rgba(255,255,255,.38); }
+footer span { color:var(--gold); }
+
+/* TABS NAV */
+.tabs-nav { position:sticky; top:0; z-index:50; background:rgba(250,248,244,.95); backdrop-filter:blur(8px); border-bottom:1px solid var(--border); }
+.tabs-nav-inner { max-width:1000px; margin:0 auto; display:flex; gap:4px; padding:0 20px; overflow-x:auto; }
+.tab-btn { font-family:'Inter',sans-serif; font-size:13px; font-weight:500; padding:14px 18px; border:none; background:none; color:var(--text-muted); cursor:pointer; white-space:nowrap; border-bottom:2px solid transparent; transition:all .15s; }
+.tab-btn:hover { color:var(--navy); }
+.tab-btn.active { color:var(--navy); border-bottom-color:var(--navy); font-weight:600; }
+.tab-page { display:none; }
+.tab-page.active { display:block; animation:fadein .3s ease; }
+@keyframes fadein { from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;} }
+
+/* INFRA TAB */
+.infra-section { max-width:1000px; margin:0 auto; padding:32px 20px 0; }
+.infra-h2 { font-family:'Playfair Display',serif; font-size:24px; font-weight:600; color:var(--navy); margin-bottom:8px; }
+.infra-lead { font-size:13.5px; color:var(--text-muted); line-height:1.7; max-width:760px; margin-bottom:24px; }
+.infra-h3 { font-size:15px; font-weight:600; color:var(--navy); margin:32px 0 14px; display:flex; align-items:center; gap:8px; }
+.infra-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:14px; }
+.infra-card { background:var(--white); border:1px solid var(--border); border-radius:12px; padding:16px 18px; }
+.infra-tag { font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:var(--gold); margin-bottom:6px; display:block; }
+.infra-card h4 { font-size:14px; font-weight:600; color:var(--text-main); margin-bottom:4px; }
+.infra-card .addr { font-size:11px; color:var(--text-light); margin-bottom:8px; }
+.infra-card p { font-size:12.5px; color:var(--text-muted); line-height:1.6; }
+.infra-note { background:#fdf6e9; border-left:3px solid var(--gold); border-radius:0 8px 8px 0; padding:13px 16px; margin:18px 0; font-size:12.5px; color:#6b5524; line-height:1.65; }
+.infra-table-wrap { overflow-x:auto; border-radius:12px; border:1px solid var(--border); }
+.infra-table { width:100%; border-collapse:collapse; font-size:12.5px; background:var(--white); }
+.infra-table th { background:var(--navy); color:#fff; text-align:left; padding:10px 14px; font-size:11px; text-transform:uppercase; letter-spacing:.04em; font-weight:500; }
+.infra-table td { padding:10px 14px; border-bottom:1px solid var(--border); color:var(--text-main); vertical-align:top; }
+.infra-table tr:last-child td { border-bottom:none; }
+.infra-table tr:hover td { background:var(--cream); }
+
+/* CLIMATE TAB */
+.clim-stats { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:14px; margin-bottom:24px; }
+.clim-stat { background:var(--white); border:1px solid var(--border); border-radius:12px; padding:16px; text-align:left; }
+.clim-stat .big { font-family:'Playfair Display',serif; font-size:22px; font-weight:600; color:var(--navy); }
+.clim-stat .lbl { font-size:11.5px; color:var(--text-muted); margin-top:4px; line-height:1.4; }
+.clim-chart-wrap { background:var(--white); border:1px solid var(--border); border-radius:14px; padding:20px 16px 10px; margin-bottom:20px; }
+.clim-legend { display:flex; gap:18px; flex-wrap:wrap; font-size:12px; color:var(--text-muted); margin-bottom:12px; }
+.clim-legend b { display:inline-block; width:11px; height:11px; border-radius:3px; vertical-align:-1px; margin-right:5px; }
+
+@media(max-width:640px){
+  .hero { padding:36px 20px 32px; }
+  .hero-stats { gap:20px; }
+  .grid { grid-template-columns:1fr; }
+  #map { height:360px; }
+  .lang-toggle { order:-1; }
+}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="brand-logo">
+        <img src="data:image/png;base64,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" alt="BOOMERANG Real Estate" style="height:32px;width:auto;display:block;"/>
+        <div class="brand-logo-text">
+          <span class="brand-logo-name">boomerang</span>
+          <span class="brand-logo-sub" data-ru="real estate" data-en="real estate"></span>
+        </div>
+      </div>
+      <h1 data-ru="Гид по районам Пхукета<br>для покупки недвижимости" data-en="Phuket Districts Guide<br>for Property Investment"></h1>
+      <p class="hero-sub" data-ru="16 районов острова — характер, инфраструктура и для кого подходит каждый. Авторский обзор команды BOOMERANG, 2025–2026." data-en="16 island districts — character, infrastructure, and who each one suits. Original overview by the BOOMERANG team, 2025–2026."></p>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <div class="stat-num">16</div>
+          <div class="stat-label" data-ru="районов на острове" data-en="districts on the island"></div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num">3</div>
+          <div class="stat-label" data-ru="официальных ампхэ острова" data-en="official administrative districts"></div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-num" data-ru="≤30 мин" data-en="≤30 min"></div>
+          <div class="stat-label" data-ru="до пляжа из любой точки острова" data-en="to the beach from anywhere on the island"></div>
+        </div>
+      </div>
+    </div>
+    <div class="lang-toggle">
+      <button class="lang-btn active" onclick="setLang('ru',this)">RU</button>
+      <button class="lang-btn" onclick="setLang('en',this)">EN</button>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs-nav">
+  <div class="tabs-nav-inner">
+    <button class="tab-btn active" onclick="showTab('map-tab',this)" data-ru="🗺️ Карта районов" data-en="🗺️ District map"></button>
+    <button class="tab-btn" onclick="showTab('infra-tab',this)" data-ru="🏥 Инфраструктура" data-en="🏥 Infrastructure"></button>
+    <button class="tab-btn" onclick="showTab('climate-tab',this)" data-ru="🌦️ Климат и сезонность" data-en="🌦️ Climate & seasonality"></button>
+  </div>
+</nav>
+
+<div class="tab-page active" id="map-tab">
+
+<div class="map-section">
+  <div class="section-eyebrow" data-ru="Интерактивная карта — нажмите на маркер района" data-en="Interactive map — click a district marker"></div>
+  <div class="map-wrap">
+    <div id="map"></div>
+    <button class="map-reset-btn" onclick="resetMapView()">⟲ <span data-ru="Весь остров" data-en="Whole island"></span></button>
+  </div>
+</div>
+
+<div class="main">
+  <div class="filter-bar">
+    <span class="filter-group-label" data-ru="Фильтр:" data-en="Filter:"></span>
+    <button class="filter-btn active" onclick="filterCards('all',this)" data-ru="Все районы" data-en="All districts"></button>
+    <button class="filter-btn coast-w" onclick="filterCards('west',this)" data-ru="🌊 Западное побережье" data-en="🌊 West Coast"></button>
+    <button class="filter-btn coast-e" onclick="filterCards('east',this)" data-ru="🌿 Восточное побережье" data-en="🌿 East Coast"></button>
+    <button class="filter-btn" onclick="filterCards('invest',this)" data-ru="📈 Инвестиции" data-en="📈 Investment"></button>
+    <button class="filter-btn" onclick="filterCards('family',this)" data-ru="👨‍👩‍👧 Для семей" data-en="👨‍👩‍👧 For families"></button>
+    <button class="filter-btn" onclick="filterCards('life',this)" data-ru="🏡 Для жизни" data-en="🏡 For living"></button>
+    <button class="filter-btn" onclick="filterCards('budget',this)" data-ru="💰 Бюджетный" data-en="💰 Budget"></button>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <div class="disclaimer">
+    <span data-ru="<strong>Важно:</strong> на Пхукете официально существует только 3 административных округа (ампхэ) — Муанг Пхукет, Катху и Тхаланг. Остальные названия в гайде — пляжи и посёлки, которые в риелторской практике принято называть «районами». Данные о доходности ориентировочны и зависят от объекта, управляющей компании и сезона: в низкий сезон (май–октябрь) спрос на аренду падает на 25–30%." data-en="<strong>Note:</strong> Phuket officially has only 3 administrative districts (amphoe) — Mueang Phuket, Kathu, and Thalang. All other names in this guide refer to beaches and townships commonly called 'districts' in real estate practice. ROI figures are indicative and depend on the property, management company, and season: in low season (May–October), rental demand drops by 25–30%."></span>
+  </div>
+</div>
+
+</div><!-- /map-tab -->
+
+<!-- ============ INFRA TAB ============ -->
+<div class="tab-page" id="infra-tab">
+<div class="infra-section">
+
+  <h2 class="infra-h2" data-ru="Инфраструктура острова" data-en="Island infrastructure"></h2>
+  <p class="infra-lead" data-ru="Пхукет лидирует среди тайских курортов по уровню медицины и плотности международных школ. Основные точки сосредоточены в двух местах: больницы — в районе Пхукет Таун, школы — на северо-западе, в коридоре Чернг-Талай / Бангтао / Лаян. Это во многом определяет, где предпочитают жить семьи и экспаты." data-en="Phuket leads Thai resort destinations in healthcare quality and the density of international schools. The key facilities cluster in two zones: hospitals around Phuket Town, schools in the northwest corridor around Cherngtalay / Bang Tao / Layan. This largely shapes where families and expats choose to live."></p>
+
+  <h3 class="infra-h3">🏥 <span data-ru="Больницы и медицина" data-en="Hospitals & healthcare"></span></h3>
+  <p class="infra-lead" style="margin-bottom:14px;" data-ru="Остров — признанный центр медицинского туризма: частные клиники с международной аккредитацией JCI, англоговорящий персонал, работа со страховками. Лучше всего медицина представлена в Пхукет Тауне." data-en="The island is a well-known medical tourism hub: private clinics with JCI international accreditation, English-speaking staff, insurance support. Healthcare is most concentrated in Phuket Town."></p>
+  <div class="infra-cards" id="hospCards"></div>
+  <div class="infra-note" data-ru="⚠️ На западном побережье (Бангтао, Лагуна, Лаян, Сурин) крупного многопрофильного госпиталя нет — до больниц Пхукет Тауна ехать 20–35 минут. Для амбулаторных вопросов есть частные клиники на месте (TakeCare Bangtao, Sainamyen, Dr. Sonita); серьёзные случаи везут в Bangkok Hospital Phuket или Siriroj." data-en="⚠️ The west coast (Bang Tao, Laguna, Layan, Surin) has no major multi-specialty hospital — it's 20–35 minutes to Phuket Town facilities. Local private clinics (TakeCare Bangtao, Sainamyen, Dr. Sonita) handle outpatient needs; serious cases go to Bangkok Hospital Phuket or Siriroj."></div>
+
+  <h3 class="infra-h3">🎓 <span data-ru="Международные школы" data-en="International schools"></span></h3>
+  <p class="infra-lead" style="margin-bottom:14px;" data-ru="Стоимость указана за учебный год 2025/26, без учёта вступительных и капитальных взносов — перед выбором уточняйте напрямую в школе." data-en="Fees shown are for the 2025/26 academic year, excluding admission and capital fees — confirm directly with the school before deciding."></p>
+  <div class="infra-table-wrap"><table class="infra-table" id="schoolTable"></table></div>
+  <div class="infra-note" data-ru="📍 Главный семейный кластер — северо-запад острова (Тхаланг). BISP, UWC Thailand и кампус HeadStart в Чернг-Талае находятся в удобной доступности от Бангтао, Лаяна, Лагуны и Камалы — там же и лучший выбор вилл, и устоявшееся комьюнити экспатов. Совет клиентам: выбирать жильё в 10–15 минутах от нужной школы — в высокий сезон те же 12 км могут занять 45 минут из-за пробок." data-en="📍 The main family cluster is in the island's northwest (Thalang). BISP, UWC Thailand, and the HeadStart campus in Cherngtalay are all conveniently close to Bang Tao, Layan, Laguna, and Kamala — also home to the best villa selection and an established expat community. Advice for clients: choose housing within 10–15 minutes of the target school — in high season, the same 12km can take 45 minutes due to traffic."></div>
+
+  <h3 class="infra-h3">🛍️ <span data-ru="Магазины и торговые центры" data-en="Shops & shopping malls"></span></h3>
+  <div class="infra-cards" id="shopCards"></div>
+  <p class="infra-lead" style="margin-top:14px;" data-ru="Из крупных сетей на острове работают Big C, Lotus's (бывший Tesco), оптовый Makro, а из премиальных — Villa Market и Central Food Hall. Лучше всего магазинами обеспечены Пхукет Таун, коридор Чернг-Талай/Лагуна/Бангтао и Патонг. Слабее всего — юг (Раваи, Най Харн) и крайний север (Найянг, Май Као)." data-en="Major chains on the island include Big C, Lotus's (formerly Tesco), wholesale Makro, and on the premium side, Villa Market and Central Food Hall. Best coverage is in Phuket Town, the Cherngtalay/Laguna/Bang Tao corridor, and Patong. Weakest coverage is in the south (Rawai, Nai Harn) and the far north (Nai Yang, Mai Khao)."></p>
+
+  <h3 class="infra-h3">✈️ <span data-ru="Аэропорт и время в пути" data-en="Airport & travel times"></span></h3>
+  <p class="infra-lead" style="margin-bottom:14px;" data-ru="Международный аэропорт Пхукета расположен на севере острова, в районе Май Као. В 2024 году через него прошло около 17,2 млн пассажиров — третий показатель по загрузке среди аэропортов Таиланда. К 2027 году ожидается рост до ~20 млн пассажиров." data-en="Phuket International Airport sits in the north of the island, near Mai Khao. In 2024 it handled around 17.2 million passengers — the third busiest airport in Thailand. Traffic is expected to grow to roughly 20 million by 2027."></p>
+  <div class="infra-table-wrap"><table class="infra-table" id="driveTable"></table></div>
+  <div class="infra-note" data-ru="⏱️ Время в пути сильно зависит от трафика: трансфер до Патонга утром может занять около 45 минут, а в 16:00 — растянуться до полутора часов. В высокий сезон дневные показатели обычно удваиваются." data-en="⏱️ Travel time depends heavily on traffic: a transfer to Patong can take about 45 minutes in the morning but stretch to 90 minutes by 4pm. In high season, daytime travel times typically double."></div>
+
+  <h3 class="infra-h3">🚕 <span data-ru="Транспорт по острову" data-en="Getting around the island"></span></h3>
+  <p class="infra-lead" data-ru="Массового общественного транспорта на острове нет. Передвигаются на сонгтэо (синие маршрутки от рынка в Пхукет Тауне), есть Smart Bus вдоль западного побережья и тук-туки. Из приложений работают Grab, Bolt и inDrive — Grab покрывает остров лучше остальных. Главная транспортная артерия север-юг — шоссе 402, на котором постоянны пробки." data-en="There's no mass public transit on the island. Locals get around by songthaew (blue shared trucks from the Phuket Town market), the Smart Bus along the west coast, and tuk-tuks. Ride apps include Grab, Bolt, and inDrive — Grab has the best island-wide coverage. The main north-south route is Highway 402, which sees constant traffic."></p>
+  <div class="infra-cards" style="margin-top:14px;">
+    <div class="infra-card">
+      <span class="infra-tag" data-ru="Проект в работе" data-en="Project underway"></span>
+      <h4 data-ru="Тоннель Катху–Патонг" data-en="Kathu–Patong tunnel"></h4>
+      <p data-ru="Скоростной тоннель под перевалом Патонг-Хилл должен снять часть нагрузки с дороги. Проект уже пересмотрен в сторону меньшего масштаба (2 бесплатные полосы), выкуплено около 75% земли. Старт строительства ожидается в 2026 году, открытие — ориентировочно в апреле 2030, сроки неоднократно сдвигались." data-en="An express tunnel under Patong Hill pass is meant to ease pressure on the road. The project has already been scaled down (2 free lanes), with about 75% of the land acquired. Construction is expected to start in 2026, with an opening target around April 2030 — though the timeline has shifted before."></p>
+    </div>
+    <div class="infra-card">
+      <span class="infra-tag" data-ru="Проект отложен" data-en="Project delayed"></span>
+      <h4 data-ru="Лёгкое метро / трамвай" data-en="Light rail / tram"></h4>
+      <p data-ru="Планируемая линия от аэропорта до Чалонга — около 42 км и 21 станция. По текущим прогнозам: одобрение проекта около 2027 года, строительство с 2028, запуск ориентировочно в декабре 2031. Сроки уже неоднократно переносились, поэтому относиться к проекту стоит как к перспективе, не как к близкой реальности." data-en="A planned line from the airport to Chalong — about 42km and 21 stations. Current estimates: project approval around 2027, construction from 2028, launch around December 2031. The timeline has already shifted multiple times, so treat it as a long-term prospect rather than something imminent."></p>
+    </div>
+    <div class="infra-card">
+      <span class="infra-tag" data-ru="Доступность по районам" data-en="Accessibility by district"></span>
+      <h4 data-ru="Где проще добираться" data-en="Where commuting is easiest"></h4>
+      <p data-ru="Лучше всего с транспортной доступностью — в Пхукет Тауне, в коридоре Тхаланг/аэропорт и в Чернг-Талае/Лагуне. Средне, но с пробками — Патонг, Ката, Карон. Самые удалённые от центра — Раваи и Най Харн (около часа от аэропорта), а также тихий север острова." data-en="Best transport access is in Phuket Town, the Thalang/airport corridor, and Cherngtalay/Laguna. Moderate but traffic-prone — Patong, Kata, Karon. The most remote from the center are Rawai and Nai Harn (about an hour from the airport), along with the quiet north of the island."></p>
+    </div>
+  </div>
+
+</div>
+</div><!-- /infra-tab -->
+
+<!-- ============ CLIMATE TAB ============ -->
+<div class="tab-page" id="climate-tab">
+<div class="infra-section">
+
+  <h2 class="infra-h2" data-ru="Климат и сезонность" data-en="Climate & seasonality"></h2>
+  <p class="infra-lead" data-ru="На Пхукете тропический муссонный климат: жарко и влажно весь год, температура почти не меняется (днём 31–34°C в любой месяц). Разницу между сезонами создают не градусы, а дожди, состояние моря и количество солнца. Для инвестора это в первую очередь вопрос того, как сезон влияет на турпоток, загрузку объектов в аренде и активность покупателей." data-en="Phuket has a tropical monsoon climate: hot and humid year-round, with daytime temperatures barely shifting (31–34°C any given month). What separates the seasons isn't temperature but rainfall, sea conditions, and sunshine. For an investor, the real question is how each season affects tourist flow, rental occupancy, and buyer activity."></p>
+
+  <div class="clim-stats">
+    <div class="clim-stat"><div class="big">31–34°C</div><div class="lbl" data-ru="дневная температура круглый год" data-en="daytime temperature year-round"></div></div>
+    <div class="clim-stat"><div class="big">~2 200 мм</div><div class="lbl" data-ru="осадков в год, около 160 дождливых дней" data-en="annual rainfall, around 160 rainy days"></div></div>
+    <div class="clim-stat"><div class="big" data-ru="Ноя–Апр" data-en="Nov–Apr"></div><div class="lbl" data-ru="высокий / сухой сезон" data-en="high / dry season"></div></div>
+    <div class="clim-stat"><div class="big" data-ru="Май–Окт" data-en="May–Oct"></div><div class="lbl" data-ru="низкий сезон, юго-западный муссон" data-en="low season, southwest monsoon"></div></div>
+  </div>
+
+  <h3 class="infra-h3" data-ru="Погода и спрос по месяцам" data-en="Weather and demand by month"></h3>
+  <div class="clim-chart-wrap">
+    <div class="clim-legend">
+      <span><b style="background:#1d4ed8"></b><span data-ru="Осадки, мм" data-en="Rainfall, mm"></span></span>
+      <span><b style="background:#c9a84c"></b><span data-ru="Дневная температура, °C" data-en="Daytime temp, °C"></span></span>
+      <span><b style="background:#991b1b"></b><span data-ru="Уровень спроса (аренда / турпоток)" data-en="Demand level (rental / tourism)"></span></span>
+    </div>
+    <svg id="climChart" viewBox="0 0 760 320" style="width:100%;height:auto"></svg>
+  </div>
+
+  <div class="infra-table-wrap"><table class="infra-table" id="climTable"></table></div>
+
+  <div class="infra-note" style="margin-top:18px;" data-ru="🔵 высокий сезон · 🟢 переходные месяцы · 🟠 начало дождей / лето · 🔴 пик дождей (сентябрь–октябрь). Период повышенного риска при купании на западных пляжах (флаги, отбойные течения) — примерно май–октябрь." data-en="🔵 high season · 🟢 transitional months · 🟠 start of rains / summer · 🔴 peak rainfall (September–October). Period of elevated swimming risk on west coast beaches (warning flags, rip currents) — roughly May–October."></div>
+
+</div>
+</div><!-- /climate-tab -->
+
+<footer>
+  <div>BOOMERANG Real Estate · Phuket · <span>Делай добро, оно возвращается!</span></div>
+  <div style="margin-top:5px;" data-ru="Авторский материал команды BOOMERANG. Данные актуальны на 2025–2026 год." data-en="Original material by the BOOMERANG team. Data current as of 2025–2026."></div>
+</footer>
+
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const D = {
+  ru: { west:'Западное побережье', east:'Восточное побережье', price:'Цена / м²', audience:'Кому подходит', type:'Тип объекта', strategy:'Стратегия', plus:'Плюсы', minus:'Минусы', badge_w:'Запад', badge_e:'Восток' },
+  en: { west:'West Coast', east:'East Coast', price:'Price / m²', audience:'Who it suits', type:'Property type', strategy:'Strategy', plus:'Pros', minus:'Cons', badge_w:'West', badge_e:'East' }
+};
+
+const districts = [
+  {
+    id:'maikhao', lat:8.163, lng:98.300, coast:'west', tags:['west','budget'],
+    ru:{ name:'Май Као', sub:'Север острова, рядом с аэропортом',
+      roi:'Земля по доступной цене', roiClass:'p-roi-low',
+      price:'от $1 800', audience:'Те, кто ищет тишину и природу', type:'Земля, отели', strategy:'Долгосрочный потенциал',
+      plus:['Самый протяжённый и безлюдный пляж острова','Граничит с нацпарком Сиринад','Здесь почти не строят — лимит на застройку','Можно наблюдать взлёт самолётов прямо с пляжа'],
+      minus:['Городской инфраструктуры рядом нет','Подходит скорее для отдыха, чем для постоянной жизни'],
+      note:'Единственная локация, где земля стоит ощутимо дешевле остального острова.' },
+    en:{ name:'Mai Khao', sub:'North of the island, next to the airport',
+      roi:'Affordable land', roiClass:'p-roi-low',
+      price:'from $1,800', audience:'Those seeking nature and quiet', type:'Land, hotels', strategy:'Long-term potential',
+      plus:['The longest, least crowded beach on the island','Borders Sirinat National Park','Very limited new construction allowed','Watch planes take off right from the beach'],
+      minus:['No nearby urban infrastructure','Better suited for holidays than full-time living'],
+      note:'The only spot on the island where land is noticeably cheaper than elsewhere.' }
+  },
+  {
+    id:'naithon', lat:8.105, lng:98.295, coast:'west', tags:['west','budget','family','invest'],
+    ru:{ name:'Найтон', sub:'Тихий сосед Бангтао, набирает популярность',
+      roi:'ROI растёт вместе с районом', roiClass:'p-roi-mid',
+      price:'на 10–15% ниже Бангтао', audience:'Семьи и инвесторы на старте', type:'Кондо, апартаменты', strategy:'Покупка на росте',
+      plus:['Спокойный пляж, волны слабые даже не в сезон','Заметно дешевле соседнего Бангтао','15 минут до всей инфраструктуры Бангтао','Цены подтягиваются вверх по мере застройки района'],
+      minus:['Магазины и сервисы пока не в пешей доступности'],
+      note:'Логичный выбор для тех, кто хочет «Бангтао по более низкой цене».' },
+    en:{ name:'Naithon', sub:'Quiet neighbour of Bang Tao, gaining popularity',
+      roi:'ROI rising with the area', roiClass:'p-roi-mid',
+      price:'10–15% below Bang Tao', audience:'Families and early-stage investors', type:'Condos, apartments', strategy:'Buy on the upswing',
+      plus:['Calm beach, gentle waves even off-season','Notably cheaper than neighbouring Bang Tao','15 minutes to all of Bang Tao\'s amenities','Prices climbing as the area develops'],
+      minus:['Shops and services not yet walkable'],
+      note:'A logical pick for those who want "Bang Tao at a lower price".' }
+  },
+  {
+    id:'bangtao', lat:7.990, lng:98.298, coast:'west', tags:['west','invest','family','life'],
+    ru:{ name:'Бангтао и Лагуна', sub:'Главный район острова для жизни и инвестиций',
+      roi:'Самая высокая ликвидность на острове', roiClass:'p-roi-high',
+      price:'$3 500–4 500', audience:'Экспаты, семьи, фрилансеры, инвесторы', type:'Виллы, кондо', strategy:'Универсальная',
+      plus:['6 км пляжа, который никогда не переполнен','Международные школы, клиники, офисы','Торговая зона Boat Avenue, аквапарк Blue Tree','Лагуна — самая премиальная застройка острова','Дорожки для пеших прогулок — редкость для Таиланда'],
+      minus:['Самый высокий ценник на острове'],
+      note:'Район с устоявшимся комьюнити экспатов и постоянным потоком ивентов.' },
+    en:{ name:'Bang Tao & Laguna', sub:'The island\'s flagship district for living and investment',
+      roi:'Highest liquidity on the island', roiClass:'p-roi-high',
+      price:'$3,500–4,500', audience:'Expats, families, freelancers, investors', type:'Villas, condos', strategy:'All-purpose',
+      plus:['6km beach that\'s never overcrowded','International schools, clinics, offices','Boat Avenue retail strip, Blue Tree water park','Laguna is the island\'s most premium development','Walkable paths — a rarity in Thailand'],
+      minus:['The highest price tag on the island'],
+      note:'An established expat community with a steady calendar of events.' }
+  },
+  {
+    id:'surin', lat:7.963, lng:98.280, coast:'west', tags:['west','invest'],
+    ru:{ name:'Сурин', sub:'Премиальный пляж с высоким сервисом',
+      roi:'Растущий инвестиционный интерес', roiClass:'p-roi-high',
+      price:'чуть ниже Бангтао', audience:'Клиенты, ценящие сервис и приватность', type:'Апартаменты, виллы', strategy:'Покупка под рост стоимости',
+      plus:['Один из самых живописных пляжей острова','Рестораны уровня Michelin, авторская кухня','Бутики и галереи','10 минут до инфраструктуры Бангтао'],
+      minus:['Часть инфраструктуры пока в стадии развития'],
+      note:'Считается перспективным направлением для инвестора, который готов заходить на росте.' },
+    en:{ name:'Surin', sub:'Premium beach with high-end service',
+      roi:'Growing investor interest', roiClass:'p-roi-high',
+      price:'slightly below Bang Tao', audience:'Clients who value service and privacy', type:'Apartments, villas', strategy:'Buy for capital growth',
+      plus:['One of the most scenic beaches on the island','Michelin-level dining, signature cuisine','Boutiques and galleries','10 minutes to Bang Tao\'s amenities'],
+      minus:['Some infrastructure still developing'],
+      note:'Seen as a high-potential pick for investors entering early.' }
+  },
+  {
+    id:'kamala', lat:7.952, lng:98.278, coast:'west', tags:['west','family','life'],
+    ru:{ name:'Камала', sub:'Тихий семейный район и «миллионерская миля»',
+      roi:'Виллы — топовый ценовой сегмент острова', roiClass:'p-roi-high',
+      price:'кондо $3 200–4 200 / виллы $5–35 млн', audience:'Семьи и клиенты с крупным бюджетом на виллу', type:'Премиальные виллы, кондо', strategy:'Жизнь / долгосрочная аренда',
+      plus:['Спокойный, живописный пляж','Вечерние рынки и набережная','Спа, йога-центры, расслабленная атмосфера','Beach-club Del Mar','Один из самых дорогих villa-сегментов на острове'],
+      minus:['На самом пляже Камала продают только отели, кондо там нет'],
+      note:'Если у клиента бюджет на виллу — Камала первый кандидат в шорт-лист. В районе есть мечети и заметная мусульманская община — стоит упомянуть заранее.' },
+    en:{ name:'Kamala', sub:'Quiet family district and "Millionaire\'s Mile"',
+      roi:'Villas — the island\'s top price segment', roiClass:'p-roi-high',
+      price:'condos $3,200–4,200 / villas $5–35M', audience:'Families and high-budget villa buyers', type:'Premium villas, condos', strategy:'Living / long-term rental',
+      plus:['Calm, scenic beach','Evening markets and promenade','Spas, yoga studios, relaxed vibe','Del Mar beach club','One of the priciest villa segments on the island'],
+      minus:['Kamala Beach itself is hotels only — no condos there'],
+      note:'If a client has a villa budget, Kamala is the first name on the shortlist. Note the area has mosques and a visible Muslim community — worth mentioning upfront.' }
+  },
+  {
+    id:'patong', lat:7.896, lng:98.298, coast:'west', tags:['west'],
+    ru:{ name:'Патонг', sub:'Туристическое сердце острова',
+      roi:'Стабильная краткосрочная загрузка', roiClass:'p-roi-mid',
+      price:'$3 000–3 800', audience:'Туристы, молодёжь, любители активной жизни', type:'Студии, апартаменты', strategy:'Краткосрочная аренда',
+      plus:['Жизнь не останавливается круглые сутки','Огромный выбор ресторанов, баров, шоу','ТЦ Jungceylon и Central Patong рядом','15 минут — и вы на тихом скрытом пляже'],
+      minus:['Шумно, плотный транспортный поток','Для постоянного проживания и семей не лучший вариант'],
+      note:'Из новых проектов выделяется EBU Construction — расположен на окраине, в спокойной части района.' },
+    en:{ name:'Patong', sub:'The island\'s tourist heart',
+      roi:'Steady short-term occupancy', roiClass:'p-roi-mid',
+      price:'$3,000–3,800', audience:'Tourists, young travellers, nightlife seekers', type:'Studios, apartments', strategy:'Short-term rental',
+      plus:['Round-the-clock energy','Huge choice of restaurants, bars, shows','Jungceylon and Central Patong malls nearby','Quiet hidden beaches just 15 minutes away'],
+      minus:['Noisy, heavy traffic','Not the best fit for full-time family living'],
+      note:'EBU Construction stands out among new projects — located on the quieter edge of the district.' }
+  },
+  {
+    id:'karon', lat:7.856, lng:98.294, coast:'west', tags:['west','invest','life'],
+    ru:{ name:'Карон', sub:'Один из самых длинных пляжей острова',
+      roi:'ROI 7–9%', roiClass:'p-roi-high',
+      price:'$3 000–3 800', audience:'Те, кто хочет простор и спокойствие у моря', type:'Кондо, апартаменты', strategy:'Аренда + комфортная жизнь',
+      plus:['Длинный широкий пляж, без давки','Заметно спокойнее Патонга','Развитая инфраструктура — магазины, кафе','Удобное расположение между Патонгом и Ката'],
+      minus:['Заметная сезонность спроса','В отдельных частях района плотная застройка'],
+      note:'' },
+    en:{ name:'Karon', sub:'One of the longest beaches on the island',
+      roi:'ROI 7–9%', roiClass:'p-roi-high',
+      price:'$3,000–3,800', audience:'Those wanting space and a calmer coastline', type:'Condos, apartments', strategy:'Rental + comfortable living',
+      plus:['Long, wide beach, never crowded','Noticeably calmer than Patong','Solid infrastructure — shops, cafés','Convenient spot between Patong and Kata'],
+      minus:['Demand is fairly seasonal','Some parts of the district are densely built'],
+      note:'' }
+  },
+  {
+    id:'kata', lat:7.822, lng:98.296, coast:'west', tags:['west'],
+    ru:{ name:'Ката и Ката Ной', sub:'Для серферов и любителей закатов',
+      roi:'ROI 7–9%', roiClass:'p-roi-mid',
+      price:'$3 000–4 000', audience:'Серферы, пары, семьи с детьми', type:'Кондо, апартаменты', strategy:'Краткосрочная аренда',
+      plus:['Волны, подходящие для сёрфинга','Сёрф-школы и прокат досок','Одни из лучших закатов на острове','Уютная, не перегруженная атмосфера'],
+      minus:['Преимущественно туристический профиль — мало школ и садов','Свободной земли под новые проекты почти не осталось'],
+      note:'' },
+    en:{ name:'Kata & Kata Noi', sub:'For surfers and sunset chasers',
+      roi:'ROI 7–9%', roiClass:'p-roi-mid',
+      price:'$3,000–4,000', audience:'Surfers, couples, families with kids', type:'Condos, apartments', strategy:'Short-term rental',
+      plus:['Waves suited for surfing','Surf schools and board rentals','Some of the best sunsets on the island','Cozy, uncrowded feel'],
+      minus:['Mostly tourist-oriented — few schools or kindergartens','Almost no free land left for new projects'],
+      note:'' }
+  },
+  {
+    id:'rawai', lat:7.774, lng:98.321, coast:'east', tags:['east','life','budget'],
+    ru:{ name:'Раваи', sub:'Обжитая деревня у моря с русской инфраструктурой',
+      roi:'ROI 6–8%', roiClass:'p-roi-mid',
+      price:'$2 500–3 200', audience:'Цифровые кочевники, семьи, русскоязычные резиденты', type:'Виллы, студии', strategy:'Долгосрочная аренда',
+      plus:['Больше русской инфраструктуры, чем где-либо: садики, школы, кафе','Пирс с лодками на соседние острова','Коворкинги, спортклубы, секции тайского бокса','Рядом — пляж Най Харн, регулярно в мировых рейтингах'],
+      minus:['Собственный пляж Раваи не предназначен для купания (рыбный рынок по утрам)','Дальше от северной части острова'],
+      note:'Один из лучших вариантов для клиента, который хочет жить среди русскоговорящих соседей.' },
+    en:{ name:'Rawai', sub:'A lived-in seaside village with strong Russian-speaking infrastructure',
+      roi:'ROI 6–8%', roiClass:'p-roi-mid',
+      price:'$2,500–3,200', audience:'Digital nomads, families, Russian-speaking residents', type:'Villas, studios', strategy:'Long-term rental',
+      plus:['More Russian-speaking infrastructure than anywhere else: kindergartens, schools, cafés','Pier with boats to nearby islands','Coworking spaces, sports clubs, Muay Thai gyms','Nai Harn beach nearby, regularly world-ranked'],
+      minus:['Rawai\'s own beach isn\'t for swimming (morning fish market)','Further from the northern part of the island'],
+      note:'One of the best picks for a client who wants Russian-speaking neighbours.' }
+  },
+  {
+    id:'naiharn', lat:7.762, lng:98.304, coast:'east', tags:['east','life','family'],
+    ru:{ name:'Най Харн', sub:'Тишина, природа и один из лучших пляжей мира',
+      roi:'ROI 6–8%', roiClass:'p-roi-mid',
+      price:'$2 800–3 500', audience:'Семьи, интроверты, любители природы', type:'Виллы, кондо', strategy:'Жизнь / долгосрочная аренда',
+      plus:['Пляж стабильно входит в мировые рейтинги','Озеро с дорожкой для бега рядом','Йога на пляже, парки, много зелени','Минимум туристического шума и транспорта'],
+      minus:['Выбор объектов ограничен','Удалён от северной части острова'],
+      note:'Идеальный вариант для тех, кто едет на Пхукет за покоем, а не за движухой.' },
+    en:{ name:'Nai Harn', sub:'Tranquility, nature, and one of the world\'s best beaches',
+      roi:'ROI 6–8%', roiClass:'p-roi-mid',
+      price:'$2,800–3,500', audience:'Families, introverts, nature lovers', type:'Villas, condos', strategy:'Living / long-term rental',
+      plus:['Beach consistently ranks among the world\'s best','Lakeside running track nearby','Beach yoga, parks, lots of greenery','Minimal tourist noise and traffic'],
+      minus:['Limited property selection','Far from the northern part of the island'],
+      note:'An ideal pick for clients coming to Phuket for calm rather than action.' }
+  },
+  {
+    id:'chalong', lat:7.844, lng:98.352, coast:'east', tags:['east','life','budget'],
+    ru:{ name:'Чалонг', sub:'Спортивная база острова — дайвинг и тайский бокс',
+      roi:'ROI 5–7%', roiClass:'p-roi-low',
+      price:'от $2 200', audience:'Дайверы, спортсмены, экспаты без привязки к морю', type:'Дома, виллы', strategy:'Жизнь / долгосрочная аренда',
+      plus:['Главная пристань острова для дайвинга','Рядом Central Phuket и статуя Большого Будды','Много школ тайского бокса и фитнес-лагерей','Цены ощутимо доступнее побережья'],
+      minus:['Прямого выхода к морю нет'],
+      note:'Хороший вариант для тех, кто переезжает жить на остров, а не покупает «для отдыха у моря».' },
+    en:{ name:'Chalong', sub:'The island\'s sports hub — diving and Muay Thai',
+      roi:'ROI 5–7%', roiClass:'p-roi-low',
+      price:'from $2,200', audience:'Divers, athletes, expats not tied to the sea', type:'Houses, villas', strategy:'Living / long-term rental',
+      plus:['Main diving pier on the island','Central Phuket mall and Big Buddha statue nearby','Many Muay Thai gyms and fitness camps','Noticeably more affordable than the coast'],
+      minus:['No direct sea access'],
+      note:'A solid option for someone relocating to live on the island, not buying purely for beachfront leisure.' }
+  },
+  {
+    id:'phukettown', lat:7.887, lng:98.393, coast:'east', tags:['east','life'],
+    ru:{ name:'Пхукет Таун', sub:'Деловой и административный центр острова',
+      roi:'ROI 4–6%', roiClass:'p-roi-low',
+      price:'от $1 800', audience:'Местные жители, специалисты, брокеры', type:'Шопхаусы, апартаменты', strategy:'Долгосрочная аренда',
+      plus:['Здесь сосредоточены банки, больницы, миграционная служба','Логистически удобен — равноудалён от всех точек острова','Атмосфера исторического Old Town'],
+      minus:['Без выхода к морю','Экспаты выбирают этот район редко'],
+      note:'Удобная база для тех, кто работает на острове, а не отдыхает.' },
+    en:{ name:'Phuket Town', sub:'The island\'s business and administrative center',
+      roi:'ROI 4–6%', roiClass:'p-roi-low',
+      price:'from $1,800', audience:'Locals, professionals, brokers', type:'Shophouses, apartments', strategy:'Long-term rental',
+      plus:['Banks, hospitals, and immigration office all here','Logistically central — equidistant from everywhere on the island','Historic Old Town character'],
+      minus:['No sea access','Rarely the first choice for expats'],
+      note:'A practical base for those working on the island, not vacationing.' }
+  },
+  {
+    id:'capepa', lat:7.808, lng:98.420, coast:'east', tags:['east','life'],
+    ru:{ name:'Кейп Панва', sub:'Уединение и панорамы океана',
+      roi:'Только отельный сегмент', roiClass:'p-roi-low',
+      price:'премиальный сегмент', audience:'Клиенты, ищущие максимум приватности', type:'Виллы, отели', strategy:'Жизнь в элитном сегменте',
+      plus:['Спокойная вода без волн','Роскошные отели и виллы','Эффектные панорамные виды на океан','Музей морской биологии рядом'],
+      minus:['Район ориентирован на отели — не для арендного инвестпортфеля'],
+      note:'Хороший вариант, когда у клиента запрос именно на тишину и вид, а не на доходность.' },
+    en:{ name:'Cape Panwa', sub:'Seclusion and ocean panoramas',
+      roi:'Hotel-only segment', roiClass:'p-roi-low',
+      price:'premium segment', audience:'Clients seeking maximum privacy', type:'Villas, hotels', strategy:'Elite-segment living',
+      plus:['Calm, wave-free water','Luxury hotels and villas','Striking panoramic ocean views','Marine biology museum nearby'],
+      minus:['Hotel-oriented area — not suited for a rental investment portfolio'],
+      note:'A good fit when a client wants quiet and a view, not yield.' }
+  },
+  {
+    id:'aopo', lat:8.063, lng:98.410, coast:'east', tags:['east','life'],
+    ru:{ name:'Ао По', sub:'Морской лайфстайл для владельцев яхт',
+      roi:'Нишевый сегмент', roiClass:'p-roi-low',
+      price:'яхтенный премиум-сегмент', audience:'Владельцы яхт, искатели приватности', type:'Виллы в закрытых комьюнити', strategy:'Жизнь',
+      plus:['Яхт-клуб Ao Po Grand Marina','Закрытые охраняемые комьюнити','Уединённые виды на залив','Пирсы и морские экскурсии'],
+      minus:['Пляжа нет','Узкая, очень специфическая аудитория'],
+      note:'Подходит точечно — под клиента с яхтой или явным запросом на морской стиль жизни.' },
+    en:{ name:'Ao Po', sub:'Nautical lifestyle for yacht owners',
+      roi:'Niche segment', roiClass:'p-roi-low',
+      price:'premium yacht segment', audience:'Yacht owners, privacy seekers', type:'Villas in gated communities', strategy:'Living',
+      plus:['Ao Po Grand Marina yacht club','Gated, secure communities','Secluded bay views','Piers and sea excursions'],
+      minus:['No beach','Very narrow, specific audience'],
+      note:'A targeted fit — for a client with a yacht or an explicit nautical lifestyle request.' }
+  },
+];
+
+let currentLang = 'ru';
+let currentFilter = 'all';
+const markersMap = {};
+
+const map = L.map('map', {
+  zoomControl:true,
+  scrollWheelZoom:false,
+  minZoom:10,
+  maxZoom:16
+}).setView([7.930, 98.340], 11.4);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'© OpenStreetMap contributors', maxZoom:18 }).addTo(map);
+map.setMaxBounds([[7.55, 97.95], [8.35, 98.75]]);
+
+function pinColor(d) {
+  const rc = d[currentLang].roiClass;
+  if (rc === 'p-roi-high') return '#134074';
+  if (rc === 'p-roi-mid')  return '#c9a84c';
+  return '#8b95a1';
+}
+function makeIcon(d) {
+  const c = pinColor(d);
+  return L.divIcon({ className:'', html:`<div style="width:38px;height:38px;border-radius:50% 50% 50% 0;transform:rotate(-45deg);background:${c};border:2.5px solid #fff;box-shadow:0 3px 10px rgba(0,0,0,.28);display:flex;align-items:center;justify-content:center;"><span style="transform:rotate(45deg);font-size:8px;font-weight:700;font-family:Inter,sans-serif;color:#fff;display:block;text-align:center;line-height:1.1;">ROI</span></div>`, iconSize:[38,38], iconAnchor:[19,38], popupAnchor:[0,-40] });
+}
+function popupHTML(d) {
+  const L2 = d[currentLang], t = D[currentLang];
+  const coastLabel = d.coast === 'west' ? t.west : t.east;
+  const plus = L2.plus.map(p=>`<span class="ptag ptag-plus">${p}</span>`).join('');
+  const minus = L2.minus.map(m=>`<span class="ptag ptag-minus">${m}</span>`).join('');
+  const note = L2.note ? `<div class="popup-note">${L2.note}</div>` : '';
+  return `<div class="popup-inner"><div class="popup-head"><div class="popup-coast">${coastLabel}</div><div class="popup-name">${L2.name}</div><div class="popup-sub">${L2.sub}</div><span class="popup-roi ${L2.roiClass}">${L2.roi}</span></div><div class="popup-body"><div class="popup-grid"><div><div class="popup-meta-label">${t.price}</div><div class="popup-meta-value">${L2.price}</div></div><div><div class="popup-meta-label">${t.audience}</div><div class="popup-meta-value">${L2.audience}</div></div><div><div class="popup-meta-label">${t.type}</div><div class="popup-meta-value">${L2.type}</div></div><div><div class="popup-meta-label">${t.strategy}</div><div class="popup-meta-value">${L2.strategy}</div></div></div><div class="popup-tags">${plus}${minus}</div>${note}</div></div>`;
+}
+districts.forEach(d => {
+  const marker = L.marker([d.lat, d.lng], { icon: makeIcon(d) }).addTo(map).bindPopup(popupHTML(d), { maxWidth:320, minWidth:280 });
+  marker.on('click', () => {
+    highlightCard(d.id);
+    const currentZoom = map.getZoom();
+    if (currentZoom < 12.5) {
+      map.flyTo(marker.getLatLng(), 12.5, { animate:true, duration:0.7, easeLinearity:0.25 });
+    }
+  });
+  markersMap[d.id] = { marker, district: d };
+});
+function refreshPopups() {
+  districts.forEach(d => {
+    const m = markersMap[d.id].marker;
+    m.setIcon(makeIcon(d));
+    if (m.isPopupOpen()) m.setPopupContent(popupHTML(d));
+    else m.bindPopup(popupHTML(d), { maxWidth:320, minWidth:280 });
+  });
+}
+function renderCards() {
+  const grid = document.getElementById('grid');
+  grid.innerHTML = '';
+  const t = D[currentLang];
+  districts.forEach(d => {
+    const L2 = d[currentLang];
+    const isWest = d.coast === 'west';
+    const badgeClass = isWest ? 'badge-west' : 'badge-east';
+    const badgeText = isWest ? t.badge_w : t.badge_e;
+    const plus = L2.plus.map(p=>`<span class="tag tag-plus">${p}</span>`).join('');
+    const minus = L2.minus.map(m=>`<span class="tag tag-minus">${m}</span>`).join('');
+    const note = L2.note ? `<div class="card-note">${L2.note}</div>` : '';
+    const roiCardClass = L2.roiClass==='p-roi-high'?'roi-high': L2.roiClass==='p-roi-mid'?'roi-mid':'roi-low';
+    const hidden = shouldHide(d) ? ' hidden' : '';
+    const div = document.createElement('div');
+    div.className = `card${hidden}`;
+    div.setAttribute('data-id', d.id);
+    div.setAttribute('data-tags', d.tags.join(' '));
+    div.innerHTML = `<span class="card-coast-badge ${badgeClass}">${badgeText}</span><div class="card-top"><div><div class="card-name">${L2.name}</div><div class="card-sub">${L2.sub}</div></div><span class="roi-badge ${roiCardClass}">${L2.roi}</span></div><div class="tags-label">${t.plus}</div><div class="tag-row">${plus}</div><div class="tags-label">${t.minus}</div><div class="tag-row">${minus}</div>${note}<div class="card-meta"><div><div class="meta-label">${t.price}</div><div class="meta-value">${L2.price}</div></div><div><div class="meta-label">${t.audience}</div><div class="meta-value">${L2.audience}</div></div><div><div class="meta-label">${t.type}</div><div class="meta-value">${L2.type}</div></div><div><div class="meta-label">${t.strategy}</div><div class="meta-value">${L2.strategy}</div></div></div>`;
+    div.addEventListener('click', () => {
+      const m = markersMap[d.id].marker;
+      map.closePopup();
+      map.flyTo(m.getLatLng(), 12.5, { animate:true, duration:0.85, easeLinearity:0.25 });
+      m.bindPopup(popupHTML(d), { maxWidth:320, minWidth:280 });
+      setTimeout(() => m.openPopup(), 500);
+      document.querySelectorAll('.card').forEach(c=>c.classList.remove('highlighted'));
+      div.classList.add('highlighted');
+    });
+    grid.appendChild(div);
+  });
+}
+function shouldHide(d) { return currentFilter !== 'all' && !d.tags.includes(currentFilter); }
+function highlightCard(id) {
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('highlighted'));
+  const card = document.querySelector(`.card[data-id="${id}"]`);
+  if (card) { card.classList.add('highlighted'); card.scrollIntoView({ behavior:'smooth', block:'center' }); }
+}
+function resetMapView() {
+  map.closePopup();
+  map.flyTo([7.930, 98.340], 11.4, { animate:true, duration:0.8, easeLinearity:0.25 });
+  document.querySelectorAll('.card').forEach(c=>c.classList.remove('highlighted'));
+}
+function filterCards(tag, btn) {
+  currentFilter = tag;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.card').forEach(card => {
+    const tags = card.getAttribute('data-tags') || '';
+    card.classList.toggle('hidden', tag !== 'all' && !tags.includes(tag));
+  });
+}
+function setLang(lang, btn) {
+  currentLang = lang;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('[data-ru],[data-en]').forEach(el => {
+    const val = el.getAttribute('data-' + lang);
+    if (val !== null) {
+      if (el.tagName === 'H1' || el.innerHTML.includes('<')) el.innerHTML = val;
+      else el.textContent = val;
+    }
+  });
+  renderCards();
+  refreshPopups();
+  renderInfra();
+}
+document.querySelectorAll('[data-ru]').forEach(el => {
+  const val = el.getAttribute('data-ru');
+  if (val !== null) {
+    if (el.tagName === 'H1' || el.tagName === 'SPAN' || el.tagName === 'H2' || el.tagName === 'H4' || el.innerHTML.includes('<')) el.innerHTML = val;
+    else el.textContent = val;
+  }
+});
+renderCards();
+
+// ─── TABS ────────────────────────────────────────────────────────────────────
+function showTab(id, btn) {
+  document.querySelectorAll('.tab-page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  if (id === 'map-tab') setTimeout(() => map.invalidateSize(), 50);
+}
+
+// ─── INFRASTRUCTURE DATA ─────────────────────────────────────────────────────
+const INFRA = {
+  ru: {
+    hospitals: [
+      { tag:'Частный · флагман', n:'Bangkok Hospital Phuket', a:'Муанг · Пхукет Таун', p:'Флагманский госпиталь острова (группа BDMS), первым на Пхукете получил аккредитацию JCI. Около 200 коек и 23+ профильных центра, ежегодно принимает 80–90 тыс. иностранных пациентов. Кардиология, онкология, ортопедия, нейрохирургия, ЭКО.' },
+      { tag:'Частный · JCI', n:'Bangkok Hospital Siriroj', a:'Муанг · Bypass Road, у Big C', p:'Бывший Phuket International, тоже входит в группу BDMS и аккредитован по JCI. Более 30 специализаций, круглосуточная неотложка и реанимация, ЭКО, гериатрия, а также собственный институт пластической хирургии.' },
+      { tag:'Частный · амбулаторный', n:'Dibuk Hospital', a:'Муанг · Chao Fah West Rd', p:'Более компактный современный госпиталь (открыт в 2014, BDMS). Терапия, хирургия, неотложная помощь, онкология, ортопедия, педиатрия, ЛОР, реабилитация — хороший вариант для амбулаторных вопросов.' },
+      { tag:'Государственный · главный', n:'Vachira Phuket Hospital', a:'Пхукет Таун · Yaowarat Rd', p:'Главный государственный госпиталь провинции, около 586 коек и более 1000 сотрудников. Дешевле частных клиник, но с более долгим ожиданием; основная точка для серьёзной неотложной помощи местного населения.' },
+      { tag:'Государственный · районный', n:'Thalang Hospital', a:'Тхаланг, север острова', p:'Небольшой районный госпиталь на 60+ коек, обслуживает северную часть острова, включая зону с международными школами. Подходит для рутинной помощи и первичной стабилизации.' }
+    ],
+    schools: [
+      ['BISP (British International)', 'Кох Кео, Муанг', 'Британская программа до IGCSE, далее IB Diploma + BTEC. Дневная и пансион', '≈470 000–935 000 ฿ (пансион +377 000–485 000 ฿)'],
+      ['UWC Thailand', 'Тхаланг', 'Полный цикл IB (PYP/MYP/DP), от подготовительной школы до 12 класса. Некоммерческая, дневная и пансион', '≈497 000–904 000 ฿ + взнос; пансион ≈633 000 ฿'],
+      ['HeadStart', 'Вичит и Чернг-Талай', 'Британская программа до IGCSE, далее A-Level или BTEC', '≈347 000–491 000 ฿'],
+      ['Kajonkiet International (KIS)', 'Катху', 'Британская программа до IGCSE и A-Level', '≈275 000–440 000 ฿ (билингвальная программа дешевле)'],
+      ['QSI International', 'Катху, Bypass Rd', 'Американская программа, AP, от подготовительной школы до 12 класса', '≈400 000–600 000 ฿ (уточнять в школе)'],
+      ['BCIS (Berda Claude)', 'Чалонг, Муанг', 'Британская (Cambridge) и французская (Baccalauréat) программы, возраст 2–18 лет', '≈350 000–600 000 ฿ (уточнять в школе)']
+    ],
+    shops: [
+      { n:'Central Phuket (Festival + Floresta)', a:'Пхукет Таун', p:'Крупнейший торговый центр острова площадью около 400 тыс. м². Festival закрывает повседневные нужды, Floresta — премиальные бренды и океанариум Aquaria. Около 500 магазинов и 300 точек питания.' },
+      { n:'Jungceylon', a:'Патонг', p:'Большой торговый центр в самом центре туристической зоны Патонга — Robinson, гипермаркет Big C Extra, кинотеатр, боулинг. Ориентирован прежде всего на туристов.' },
+      { n:'Boat Avenue и Porto de Phuket', a:'Чернг-Талай, рядом с Лагуной', p:'Открытые community-моллы на въезде в Лагуну: рестораны, кафе, супермаркет Villa Market, пятничный night market, Central Food Hall. Главный lifestyle-узел западного побережья.' },
+      { n:'Robinson Lifestyle', a:'Тхаланг, север острова', p:'Открыт в 2022 году, около 44 тыс. м², рядом с памятником героиням Пхукета. Обслуживает растущий северный коридор.' },
+      { n:'Premium Outlet', a:'Кох Кео, у Bypass Road', p:'Около 300 брендов со скидками 10–70% (Nike, Adidas, Levi\'s и другие). Примерно 20 минут от Патонга.' },
+      { n:'Limelight Avenue', a:'Старый Пхукет Таун', p:'Компактный lifestyle-молл в историческом центре, рассчитанный на пешую прогулку.' }
+    ],
+    drives: [
+      ['Найянг', '≈10–15 минут (ближе всего к аэропорту)'],
+      ['Бангтао / Лагуна / Чернг-Талай', '≈25–30 минут'],
+      ['Пхукет Таун', '≈35 минут'],
+      ['Патонг', '≈40 минут (≈35 км)'],
+      ['Ката / Карон', '≈50 минут'],
+      ['Раваи / Най Харн', '≈60 минут']
+    ],
+    months: [
+      ['Янв',22.7,32.7,35,'Сухой, высокий сезон (пик)','Очень высокий',5],
+      ['Фев',22.9,33.9,40,'Сухой, высокий сезон (пик)','Очень высокий (китайский Новый год)',5],
+      ['Мар',23.5,34.3,75,'Сухой, высокий сезон','Высокий, активные просмотры объектов',4],
+      ['Апр',24.1,34.0,125,'Жарко, перед началом муссона','Высокий → средний (Сонгкран)',4],
+      ['Май',24.3,32.8,295,'Влажный, низкий сезон','Средний → низкий',2],
+      ['Июн',24.2,32.3,265,'Влажный, низкий сезон','Низкий',1],
+      ['Июл',24.3,31.9,215,'Влажный, низкий сезон','Низкий–средний',2],
+      ['Авг',24.3,31.6,245,'Влажный, низкий сезон','Низкий–средний',2],
+      ['Сен',23.8,31.4,325,'Пик дождей','Самый низкий за год',1],
+      ['Окт',23.5,31.5,315,'Пик дождей','Низкий, к концу месяца рост',1],
+      ['Ноя',23.3,32.0,195,'Переход к сухому сезону','Спрос растёт',3],
+      ['Дек',22.9,31.9,80,'Сухой, высокий сезон (пик)','Очень высокий (Рождество и Новый год)',5]
+    ],
+    table_headers: { hosp:['Госпиталь','Локация','Тип','Описание'], school:['Школа','Район','Программа','Стоимость в год'], shop:['Объект','Локация','Описание'], drive:['От аэропорта (HKT) до','Время в пути'], clim:['Месяц','Темп. ночь/день','Осадки, мм','Сезон','Спрос'] }
+  },
+  en: {
+    hospitals: [
+      { tag:'Private · flagship', n:'Bangkok Hospital Phuket', a:'Mueang · Phuket Town', p:'The island\'s flagship hospital (BDMS group), the first on Phuket to receive JCI accreditation. About 200 beds and 23+ specialty centers, treating 80,000–90,000 international patients a year. Cardiology, oncology, orthopedics, neurosurgery, IVF.' },
+      { tag:'Private · JCI', n:'Bangkok Hospital Siriroj', a:'Mueang · Bypass Road, near Big C', p:'Formerly Phuket International, also part of BDMS and JCI-accredited. Over 30 specialties, 24/7 emergency and ICU care, IVF, geriatrics, and its own plastic surgery institute.' },
+      { tag:'Private · outpatient', n:'Dibuk Hospital', a:'Mueang · Chao Fah West Rd', p:'A smaller, modern hospital (opened 2014, BDMS). Internal medicine, surgery, emergency care, oncology, orthopedics, pediatrics, ENT, rehab — a solid choice for outpatient needs.' },
+      { tag:'Public · main', n:'Vachira Phuket Hospital', a:'Phuket Town · Yaowarat Rd', p:'The province\'s main public hospital, with about 586 beds and over 1,000 staff. Cheaper than private clinics but with longer waits; the default for serious emergencies among locals.' },
+      { tag:'Public · district', n:'Thalang Hospital', a:'Thalang, north of the island', p:'A small district hospital with 60+ beds, serving the north of the island including the international-school corridor. Suitable for routine care and initial stabilization.' }
+    ],
+    schools: [
+      ['BISP (British International)', 'Koh Kaew, Mueang', 'British curriculum up to IGCSE, then IB Diploma + BTEC. Day & boarding', '≈470,000–935,000 ฿ (boarding +377,000–485,000 ฿)'],
+      ['UWC Thailand', 'Thalang', 'Full IB continuum (PYP/MYP/DP), pre-K through grade 12. Non-profit, day & boarding', '≈497,000–904,000 ฿ + fee; boarding ≈633,000 ฿'],
+      ['HeadStart', 'Wichit & Cherngtalay', 'British curriculum up to IGCSE, then A-Level or BTEC', '≈347,000–491,000 ฿'],
+      ['Kajonkiet International (KIS)', 'Kathu', 'British curriculum up to IGCSE and A-Level', '≈275,000–440,000 ฿ (bilingual track is cheaper)'],
+      ['QSI International', 'Kathu, Bypass Rd', 'American curriculum, AP, pre-K through grade 12', '≈400,000–600,000 ฿ (confirm with school)'],
+      ['BCIS (Berda Claude)', 'Chalong, Mueang', 'British (Cambridge) and French (Baccalauréat) tracks, ages 2–18', '≈350,000–600,000 ฿ (confirm with school)']
+    ],
+    shops: [
+      { n:'Central Phuket (Festival + Floresta)', a:'Phuket Town', p:'The island\'s largest mall at roughly 400,000 m². Festival covers everyday needs, Floresta houses premium brands and the Aquaria aquarium. About 500 shops and 300 dining spots.' },
+      { n:'Jungceylon', a:'Patong', p:'A large mall right in the heart of Patong\'s tourist zone — Robinson, a Big C Extra hypermarket, a cinema, bowling. Geared mainly toward tourists.' },
+      { n:'Boat Avenue & Porto de Phuket', a:'Cherngtalay, near Laguna', p:'Open-air community malls at the entrance to Laguna: restaurants, cafés, Villa Market supermarket, a Friday night market, Central Food Hall. The main lifestyle hub of the west coast.' },
+      { n:'Robinson Lifestyle', a:'Thalang, north of the island', p:'Opened in 2022, around 44,000 m², near the Heroines Monument. Serves the growing northern corridor.' },
+      { n:'Premium Outlet', a:'Koh Kaew, near Bypass Road', p:'Around 300 brands at 10–70% off (Nike, Adidas, Levi\'s, and more). About 20 minutes from Patong.' },
+      { n:'Limelight Avenue', a:'Old Phuket Town', p:'A compact lifestyle mall in the historic center, designed for walking.' }
+    ],
+    drives: [
+      ['Nai Yang', '≈10–15 min (closest to airport)'],
+      ['Bang Tao / Laguna / Cherngtalay', '≈25–30 min'],
+      ['Phuket Town', '≈35 min'],
+      ['Patong', '≈40 min (≈35 km)'],
+      ['Kata / Karon', '≈50 min'],
+      ['Rawai / Nai Harn', '≈60 min']
+    ],
+    months: [
+      ['Jan',22.7,32.7,35,'Dry, high season (peak)','Very high',5],
+      ['Feb',22.9,33.9,40,'Dry, high season (peak)','Very high (Chinese New Year)',5],
+      ['Mar',23.5,34.3,75,'Dry, high season','High, active viewings',4],
+      ['Apr',24.1,34.0,125,'Hot, pre-monsoon','High → moderate (Songkran)',4],
+      ['May',24.3,32.8,295,'Wet, low season','Moderate → low',2],
+      ['Jun',24.2,32.3,265,'Wet, low season','Low',1],
+      ['Jul',24.3,31.9,215,'Wet, low season','Low–moderate',2],
+      ['Aug',24.3,31.6,245,'Wet, low season','Low–moderate',2],
+      ['Sep',23.8,31.4,325,'Peak rainfall','Lowest of the year',1],
+      ['Oct',23.5,31.5,315,'Peak rainfall','Low, rising toward end of month',1],
+      ['Nov',23.3,32.0,195,'Transition to dry season','Demand rising',3],
+      ['Dec',22.9,31.9,80,'Dry, high season (peak)','Very high (Christmas & New Year)',5]
+    ],
+    table_headers: { hosp:['Hospital','Location','Type','Description'], school:['School','District','Programme','Annual fee'], shop:['Venue','Location','Description'], drive:['From airport (HKT) to','Travel time'], clim:['Month','Night/Day temp','Rainfall, mm','Season','Demand'] }
+  }
+};
+
+function renderInfra() {
+  const t = INFRA[currentLang];
+
+  document.getElementById('hospCards').innerHTML = t.hospitals.map(h =>
+    `<div class="infra-card"><span class="infra-tag">${h.tag}</span><h4>${h.n}</h4><div class="addr">📍 ${h.a}</div><p>${h.p}</p></div>`
+  ).join('');
+
+  document.getElementById('schoolTable').innerHTML =
+    `<thead><tr><th>${t.table_headers.school[0]}</th><th>${t.table_headers.school[1]}</th><th>${t.table_headers.school[2]}</th><th>${t.table_headers.school[3]}</th></tr></thead><tbody>` +
+    t.schools.map(s => `<tr><td><b>${s[0]}</b></td><td>${s[1]}</td><td>${s[2]}</td><td>${s[3]}</td></tr>`).join('') +
+    '</tbody>';
+
+  document.getElementById('shopCards').innerHTML = t.shops.map(s =>
+    `<div class="infra-card"><h4>${s.n}</h4><div class="addr">📍 ${s.a}</div><p>${s.p}</p></div>`
+  ).join('');
+
+  document.getElementById('driveTable').innerHTML =
+    `<thead><tr><th>${t.table_headers.drive[0]}</th><th>${t.table_headers.drive[1]}</th></tr></thead><tbody>` +
+    t.drives.map(d => `<tr><td>${d[0]}</td><td>${d[1]}</td></tr>`).join('') + '</tbody>';
+
+  document.getElementById('climTable').innerHTML =
+    `<thead><tr><th>${t.table_headers.clim[0]}</th><th>${t.table_headers.clim[1]}</th><th>${t.table_headers.clim[2]}</th><th>${t.table_headers.clim[3]}</th><th>${t.table_headers.clim[4]}</th></tr></thead><tbody>` +
+    t.months.map(m => `<tr><td><b>${m[0]}</b></td><td>${m[1]} / ${m[2]}°C</td><td>${m[3]}</td><td>${m[4]}</td><td>${m[5]}</td></tr>`).join('') +
+    '</tbody>';
+
+  drawClimChart(t.months);
+}
+
+function drawClimChart(months) {
+  const W=760, H=300, padL=42, padR=42, padB=40, padT=14;
+  const n = months.length, cw = (W-padL-padR)/n;
+  const maxRain=340, maxTemp=36, minTemp=20;
+  let svg = '';
+  for (let r=0; r<=300; r+=100) {
+    const y = padT + (H-padT-padB)*(1-r/maxRain);
+    svg += `<line x1="${padL}" y1="${y}" x2="${W-padR}" y2="${y}" stroke="#e5e7eb" stroke-width="1"/>`;
+    svg += `<text x="${padL-6}" y="${y+4}" fill="#9ca3af" font-size="10" text-anchor="end">${r}</text>`;
+  }
+  months.forEach((m,i) => {
+    const cx = padL + cw*i + cw/2;
+    const bh = (H-padT-padB)*(m[3]/maxRain);
+    const by = padT + (H-padT-padB) - bh;
+    const bw = cw*0.42;
+    svg += `<rect x="${cx-bw}" y="${by}" width="${bw}" height="${bh}" rx="2" fill="#1d4ed8" opacity="0.82"/>`;
+    const dh = (H-padT-padB)*(m[6]/5)*0.5;
+    const dy = padT + (H-padT-padB) - dh;
+    svg += `<rect x="${cx+1}" y="${dy}" width="${bw*0.7}" height="${dh}" rx="2" fill="#991b1b" opacity="0.78"/>`;
+    svg += `<text x="${cx}" y="${H-padB+16}" fill="#6b7280" font-size="11" text-anchor="middle">${m[0]}</text>`;
+  });
+  const pts = months.map((m,i) => {
+    const cx = padL + cw*i + cw/2;
+    const ty = padT + (H-padT-padB)*(1-(m[2]-minTemp)/(maxTemp-minTemp));
+    return [cx, ty];
+  });
+  const path = 'M' + pts.map(p => p[0]+','+p[1]).join(' L');
+  svg += `<path d="${path}" fill="none" stroke="#c9a84c" stroke-width="2.5"/>`;
+  pts.forEach((p,i) => {
+    svg += `<circle cx="${p[0]}" cy="${p[1]}" r="3.5" fill="#c9a84c"/>`;
+    svg += `<text x="${p[0]}" y="${p[1]-8}" fill="#a3852f" font-size="9.5" text-anchor="middle">${months[i][2]}</text>`;
+  });
+  document.getElementById('climChart').innerHTML = svg;
+}
+
+renderInfra();
+</script>
+</body>
+</html>
