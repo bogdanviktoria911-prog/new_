@@ -1,0 +1,804 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Моя роль и вознаграждение — Head of Resale &amp; Investment Properties · BOOMERANG</title>
+<style>
+  :root{
+    --navy:#134074; --navy-2:#0e3160; --navy-ink:#0b2547;
+    --gold:#c9a84c; --gold-soft:#e7d49a;
+    --paper:#f6f4ee; --card:#ffffff; --line:#e4e0d4;
+    --ink:#1d2430; --muted:#5d6675;
+    --ok:#1f7a4d; --ok-bg:#e7f4ec;
+    --bad:#a32a2a; --bad-bg:#fbecec;
+    --warn:#8a6d1f; --warn-bg:#fbf4dd;
+    --mono:'Cascadia Code',ui-monospace,'SFMono-Regular',Consolas,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{
+    font-family:Calibri,'Segoe UI',system-ui,sans-serif;
+    color:var(--ink); background:var(--paper);
+    line-height:1.5; font-size:16px;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding:0 18px 80px}
+
+  /* ---- header ---- */
+  header.top{
+    background:linear-gradient(180deg,var(--navy) 0%,var(--navy-2) 100%);
+    color:#fff;
+  }
+  .top-inner{max-width:1000px;margin:0 auto;padding:22px 18px 26px;
+    display:flex;gap:18px;align-items:center;flex-wrap:wrap}
+  .top img{height:54px;width:auto;display:block;filter:brightness(0) invert(1);opacity:.96}
+  .top .eyebrow{font-size:12.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--gold-soft);font-weight:700;margin:0 0 3px}
+  .top h1{font-size:21px;margin:0;font-weight:700;letter-spacing:.01em}
+  .top .sub{font-size:14px;color:#cdd8e8;margin:3px 0 0}
+  .top .slogan{margin-left:auto;text-align:right;font-style:italic;
+    color:var(--gold-soft);font-size:13.5px;max-width:200px}
+
+  /* ---- progress / nav ---- */
+  nav.steps{position:sticky;top:0;z-index:20;background:var(--card);
+    border-bottom:1px solid var(--line);box-shadow:0 1px 0 rgba(0,0,0,.03)}
+  .steps-inner{max-width:1000px;margin:0 auto;padding:9px 18px;
+    display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+  .chip{border:1px solid var(--line);background:#fff;color:var(--muted);
+    padding:6px 12px;border-radius:999px;font-size:13.5px;font-weight:600;
+    cursor:pointer;display:flex;align-items:center;gap:7px;transition:.15s}
+  .chip:hover{border-color:var(--gold)}
+  .chip.active{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .chip .n{font-family:var(--mono);font-size:12px;opacity:.8}
+  .chip.done .n::after{content:" ✓";color:var(--gold)}
+  .chip.active.done .n::after{color:var(--gold-soft)}
+
+  /* ---- cards ---- */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;
+    padding:22px 22px;margin:18px 0;box-shadow:0 1px 2px rgba(11,37,71,.04)}
+  .card h2{font-size:19px;margin:0 0 4px;color:var(--navy-ink);letter-spacing:.01em}
+  .card .lede{color:var(--muted);font-size:14.5px;margin:0 0 14px}
+  .seg{display:inline-block;font-family:var(--mono);font-size:11.5px;font-weight:700;
+    letter-spacing:.1em;text-transform:uppercase;color:var(--gold);
+    background:var(--navy-ink);padding:3px 9px;border-radius:5px;margin-bottom:10px}
+
+  .panel{display:none}
+  .panel.show{display:block}
+
+  /* ---- questions ---- */
+  .q{border:1px solid var(--line);border-radius:11px;padding:16px 16px 14px;margin:14px 0;background:#fff}
+  .q .qhead{display:flex;gap:10px;align-items:flex-start}
+  .q .qnum{font-family:var(--mono);font-size:12px;font-weight:700;color:#fff;
+    background:var(--navy);min-width:30px;height:24px;border-radius:6px;
+    display:flex;align-items:center;justify-content:center;margin-top:1px}
+  .q .qtext{font-weight:600;font-size:16px}
+  .q .scn{background:var(--paper);border:1px solid var(--line);border-left:3px solid var(--gold);
+    border-radius:8px;padding:10px 12px;margin:10px 0 4px;font-size:14.5px}
+  .q .scn b{color:var(--navy-ink)}
+  .opts{display:flex;flex-direction:column;gap:8px;margin-top:11px}
+  .opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);
+    border-radius:9px;padding:10px 12px;cursor:pointer;background:#fff;transition:.12s;font-size:15px}
+  .opt:hover{border-color:var(--gold);background:#fffdf6}
+  .opt input{margin-top:3px;accent-color:var(--navy)}
+  .opt.sel{border-color:var(--navy);background:#f3f7fd}
+  .opt.correct{border-color:var(--ok);background:var(--ok-bg)}
+  .opt.wrong{border-color:var(--bad);background:var(--bad-bg)}
+  .opt.locked{cursor:default;pointer-events:none}
+
+  .numrow{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap}
+  .numrow label{font-size:14px;color:var(--muted);font-weight:600}
+  input.num{font-family:var(--mono);font-size:16px;width:160px;padding:9px 11px;
+    border:1.5px solid var(--line);border-radius:9px}
+  input.num:focus{outline:none;border-color:var(--navy)}
+  .unit{font-family:var(--mono);color:var(--muted);font-size:14px}
+
+  .fb{margin-top:12px;border-radius:9px;padding:11px 13px;font-size:14.5px;display:none}
+  .fb.show{display:block}
+  .fb.good{background:var(--ok-bg);border:1px solid #bfe3cd;color:#13502f}
+  .fb.bad{background:var(--bad-bg);border:1px solid #eccaca;color:#7a1f1f}
+  .fb.saved{background:#eef2f8;border:1px solid #d7e0ee;color:#2b3a52}
+  .fb .calc{font-family:var(--mono);font-size:13px;background:#fff;border:1px dashed var(--line);
+    border-radius:7px;padding:9px 11px;margin-top:8px;color:var(--ink);white-space:pre-wrap;line-height:1.7}
+  .fb .ref{margin-top:8px;font-size:12.5px;color:var(--muted)}
+  .note{background:var(--warn-bg);border:1px solid #ecdca0;border-left:3px solid var(--gold);
+    border-radius:9px;padding:11px 13px;font-size:13.5px;color:#6b561a;margin:0 0 14px;line-height:1.55}
+  .note b{color:#5a4712}
+
+  /* ---- buttons ---- */
+  .btn{font-family:inherit;font-size:15px;font-weight:700;border-radius:10px;
+    padding:10px 18px;border:1px solid var(--navy);background:var(--navy);color:#fff;
+    cursor:pointer;transition:.15s}
+  .btn:hover{background:var(--navy-2)}
+  .btn.ghost{background:#fff;color:var(--navy)}
+  .btn.ghost:hover{background:#f3f7fd}
+  .btn.gold{background:var(--gold);border-color:var(--gold);color:#3a2f0c}
+  .btn.gold:hover{filter:brightness(.96)}
+  .btn:disabled{opacity:.45;cursor:default}
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px;align-items:center}
+  .actions .spacer{flex:1}
+  .smallnote{font-size:13px;color:var(--muted)}
+
+  /* ---- intro ---- */
+  .intro-grid{display:grid;grid-template-columns:1fr;gap:14px}
+  .field{display:flex;flex-direction:column;gap:6px}
+  .field label{font-size:13.5px;font-weight:700;color:var(--navy-ink)}
+  .field input,.field select{font-family:inherit;font-size:15px;padding:10px 12px;
+    border:1.5px solid var(--line);border-radius:9px;background:#fff}
+  .field input:focus,.field select:focus{outline:none;border-color:var(--navy)}
+  ul.tight{margin:6px 0 0;padding-left:18px;color:var(--muted);font-size:14px}
+  ul.tight li{margin:4px 0}
+
+  /* ---- free calc ---- */
+  .calcgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  @media(max-width:640px){.calcgrid{grid-template-columns:1fr}}
+  .out{background:var(--navy-ink);color:#eaf0fa;border-radius:12px;padding:16px 18px;margin-top:14px}
+  .out .big{font-family:var(--mono);font-size:26px;font-weight:700;color:#fff}
+  .out .big .thb{color:var(--gold-soft);font-size:17px}
+  .out .steps{font-family:var(--mono);font-size:13px;color:#bcc8dc;margin-top:10px;
+    white-space:pre-wrap;line-height:1.8;border-top:1px solid rgba(255,255,255,.13);padding-top:10px}
+  .tag{display:inline-block;font-size:12px;font-weight:700;border-radius:6px;padding:2px 8px;margin-left:8px}
+  .tag.s50{background:#173a25;color:#a9e3c0}
+  .tag.s27{background:#3a3216;color:#e7d49a}
+  .tag.s20{background:#3a1d16;color:#e6b6a6}
+  .tag.shead{background:#16263a;color:#a6c6e6}
+
+  /* ---- report ---- */
+  .scorebar{display:flex;gap:14px;flex-wrap:wrap;margin:6px 0 14px}
+  .score{flex:1;min-width:150px;background:#fff;border:1px solid var(--line);
+    border-radius:12px;padding:14px 16px}
+  .score .lab{font-size:12.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.08em}
+  .score .val{font-family:var(--mono);font-size:30px;font-weight:700;color:var(--navy);margin-top:2px}
+  .score .val small{font-size:15px;color:var(--muted)}
+  .meter{height:9px;border-radius:6px;background:#eee;overflow:hidden;margin-top:9px}
+  .meter > span{display:block;height:100%;background:var(--gold)}
+  .verdict{border-radius:12px;padding:14px 16px;font-size:15px;margin:10px 0}
+  .verdict.pass{background:var(--ok-bg);border:1px solid #bfe3cd}
+  .verdict.warn{background:var(--warn-bg);border:1px solid #ecdca0}
+  .verdict.fail{background:var(--bad-bg);border:1px solid #eccaca}
+  .gaps{margin-top:10px}
+  .gap{border:1px solid var(--line);border-left:3px solid var(--bad);border-radius:9px;
+    padding:10px 13px;margin:8px 0;background:#fff;font-size:14px}
+  .gap .where{font-family:var(--mono);font-size:12px;color:var(--bad);font-weight:700}
+  .rev{border:1px solid var(--line);border-left:3px solid var(--line);border-radius:9px;padding:11px 13px;margin:8px 0;background:#fff}
+  .rev.good{border-left-color:var(--ok);background:var(--ok-bg)}
+  .rev.bad{border-left-color:var(--bad);background:var(--bad-bg)}
+  .rev.na{border-left-color:var(--warn);background:var(--warn-bg)}
+  .rev .qtext2{font-weight:600;font-size:14.5px;margin-bottom:6px}
+  .rev .ans{font-size:14px;margin:3px 0}
+  .rev .ans.g{color:#13502f;font-weight:600}
+  .rev .ans.r{color:#7a1f1f}
+  .rev .ans.na{color:#6b561a}
+  .rev .refrev{font-size:12.5px;color:var(--muted);margin-top:6px}
+  .rev .calc{font-family:var(--mono);font-size:12.5px;background:#fff;border:1px dashed var(--line);
+    border-radius:7px;padding:8px 10px;margin-top:7px;white-space:pre-wrap;line-height:1.7;color:var(--ink)}
+  table.rep{width:100%;border-collapse:collapse;margin-top:8px;font-size:14px}
+  table.rep th,table.rep td{border:1px solid var(--line);padding:8px 10px;text-align:left}
+  table.rep th{background:var(--paper);color:var(--navy-ink);font-size:12.5px;text-transform:uppercase;letter-spacing:.05em}
+  table.rep td.c{text-align:center;font-family:var(--mono)}
+
+  footer{margin-top:26px;text-align:center;color:var(--muted);font-size:12.5px}
+  .hidden{display:none!important}
+  @media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="top-inner">
+    <img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAABXCAMAAADRa0zBAAAA/1BMVEUAEjYYKEn8/f0ACzAyQV0OHkBKVm4pN1Rud4qQl6Tm6OpYY3k7SGOkqbSdo6+3u8TS1dp7g5OCiZnEyM4gLUtBTWitsru9wchjbYJia37a3eDe4eReaoGJkJ0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC3SUJoAAAAQHRSTlP///////////////////////////////////////8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA8wduJAAABClJREFUeNrtm2mToyAQhqGR5hLPqDlm///f3E4ym2QyOSABzYelpiyHUXh8+xDsGsaSN37RLvslW7Lx21j73xYEkzexboj3AWLxpbH4LawPo5JXnR8l1jXl0lT8qi/LhG9TyVwyxFHxq76M1omlyitWiIPw+cX6kbsDqeTPTpk/xkKoeNDD5Enf96EOl/C5sX4tDhaiujP5/TYXFvtMqjiuq4UX+wyugNhdgEteiZV77SDnFEtG3BxIlQCLRw3xglg8kce8B8ZyYT0Z6jmVTIDFHk0QD3ZvnZoy8ONDkqXDevj4cWAsKdZzu4TdcvsPki0L9nwVlPzl8n2NMCjuGDNkcZZJMqHgJ1aKTPg+mGhh9QJWijXEQ1vanl1iifmwHqQl2ULHLtfxRomw58q6tiotYG1OJGJ109N4Rq6rwXWPnKsGag/lKQ8JTlh7LrE//juIuxEjDpekBFM9NLUFqGA8J0jCcojkYINbEY0bKFIVlnxNj1Bq5AoHp/BwUq4LxgbkZTLF/GRQSV4BtXGC9mwTwmoaqNhoG4tot3Zk9W6CuodS29EaBNuvmwm6NdS2UWZ/9Uokcn6sAXamlOibcbBQydMbhbA6sYYOCtYBBUNBnueZ7Tjobf9Vwxo2XOmvadKgHGxAC50G6yhYaUgor+hc0cn6tMreG1GU4IHTEQYhYU0BYbWE1vZd1znyw7Fpm/qApelilwrrCFaMAJY8hrfEZdQ3F2Ftu6ZRdjJQGTCTXfWVsK2ETbXT3iMMvOmd7Q9YONlqmw7r6GEkWE9q8YFMatsjGOUt5yslVFVrJnRNp9qxDpkhq06+LCrFcay6Fs2q9AqNaUEl3iFScuDGNkZhRRHpy6Neh5gXp9zAzj/XOVmqnVHeqpS7WRq2B633wWgdo+eu9WEucWwM2TfNRQr7lbm0tVuXdj/Lld0VO1KJ3EOfZ0JUX1xtVMUYonRFa7hTmg7lrXSvCpV4oy06cJq8nvh0dZ6oxvHPH22MEegr7TetHozXrTb+4NoyfpsQ2XpN3qWv5iGVvN5UxhuGvsXWr7U2teu0aeWru4RIK1Jq6n8NjUw5XqIqjkYsGar9gbvincV4jBUpQ7sbA18E4un86PzzgIm6eXnYnGBWi9cHffI97I23tmHPsB5OJTNJJp7ttZ7Olc2WD0aTIXPlsmUU1U0RsigWV8wILhG9C3ZvmFi3SWzJOzMGfLgMJJMJsII/9Ebsk+fEejCbTI4VVd4I/LyQrg4bXtyYp7wSWQuaqRoVXTmTn4k1S836lbIsX1wsKRfBCvzGNgdXWM56rzSYSazgJDyrWOG3ZqSSL1T7FhAr5H6ZnSq2RJdDrfep8iaH+UI/Bkv+Fysc68niaxkqyT5RrJleKSK0ff9/wK+ui89v6RorQluJiOXPLrxoQ5GyMfjI9qFYfwGlIC49JbsvMAAAAABJRU5ErkJggg==" alt="BOOMERANG">
+    <div>
+      <p class="eyebrow">Понимание роли · BOOMERANG</p>
+      <h1>Моя роль: Head of Resale &amp; Investment Properties</h1>
+      <p class="sub">Что я делаю, за что отвечаю и сколько за это получаю</p>
+    </div>
+    <div class="slogan">«Делай добро,&nbsp;оно&nbsp;возвращается!»</div>
+  </div>
+</header>
+
+<nav class="steps">
+  <div class="steps-inner" id="nav"></div>
+</nav>
+
+<div class="wrap">
+
+  <!-- ================= INTRO ================= -->
+  <section class="panel show" data-panel="intro">
+    <div class="card">
+      <span class="seg">С чего начать</span>
+      <h2>Разбор роли и вознаграждения</h2>
+      <p class="lede">Тренажёр построен строго на двух документах: должностной инструкции
+        <i>Head of Resale &amp; Investment Properties</i> (v4–v5, июнь 2026) и файле
+        <i>BOOMERANG_Мотивация_Head_of_Resale</i>. Никаких внешних допущений.</p>
+      <div class="intro-grid">
+        <div class="field">
+          <label>ФИО сотрудника</label>
+          <input id="emp" placeholder="например, Екатерина Салтан" autocomplete="off">
+        </div>
+      </div>
+      <ul class="tight">
+        <li><b>Блок 1 — задачи и ответственность.</b> 12 вопросов с одиночным выбором.</li>
+        <li><b>Блок 2 — сколько я получаю.</b> 10 кейсов: вы сами считаете бонус в USD.</li>
+        <li><b>Свободная практика.</b> Калькулятор с параметрами сделки — для отработки до уверенного результата.</li>
+        <li><b>Отчёт в конце.</b> Правильные ответы, полный разбор расчётов и карта пробелов открываются после прохождения обоих блоков — а не после каждого вопроса.</li>
+      </ul>
+      <div class="actions">
+        <button class="btn gold" onclick="go('block1')">Начать →</button>
+        <span class="smallnote">Время не ограничено. Считать можно на калькуляторе — проверяем логику, а не устный счёт.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= BLOCK 1 ================= -->
+  <section class="panel" data-panel="block1">
+    <div class="card">
+      <span class="seg">Блок 1 из 2</span>
+      <h2>Обязанности, KPI, регламент и полномочия</h2>
+      <p class="lede">Один правильный вариант в каждом вопросе. Выберите ответ и нажмите «Записать ответ». Правильные варианты и разбор откроются в отчёте после обоих блоков.</p>
+      <div id="b1q"></div>
+      <div class="actions">
+        <button class="btn ghost" onclick="go('intro')">← Назад</button>
+        <div class="spacer"></div>
+        <span class="smallnote" id="b1count">Отвечено 0 из 12</span>
+        <button class="btn" id="b1next" onclick="go('block2')">К расчётам мотивации →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= BLOCK 2 ================= -->
+  <section class="panel" data-panel="block2">
+    <div class="card">
+      <span class="seg">Блок 2 из 2</span>
+      <h2>Расчёт мотивации по сценариям</h2>
+      <p class="lede">Прочитайте условия сделки и впишите <b>итоговый бонус сотрудника в USD</b> (без оклада и KPI).
+        Допуск ±$1. Правильная сумма и пошаговый разбор — в отчёте в конце.</p>
+      <div class="note">Все суммы показаны <b>до вычета расходной части</b> (налоги — Transfer Fee, SBT / Stamp Duty, регистрационные сборы, операционные расходы) и <b>без поправки на курс</b>. Фактический бонус считается от комиссии АН после вычета расходов; пересчёт в THB — по курсу на дату выплаты. База зависит от схемы: брокерский бонус и 20% собственника считаются от комиссии АН, а бонус за подготовленный объект (0,25–1%) — от цены объекта. «Оборот» в типе клиента — это месячный объём закрытых сделок, а не цена конкретного объекта.</div>
+      <div id="b2q"></div>
+      <div class="actions">
+        <button class="btn ghost" onclick="go('block1')">← Назад</button>
+        <div class="spacer"></div>
+        <span class="smallnote" id="b2count">Решено 0 из 10</span>
+        <button class="btn" id="b2next" onclick="go('practice')">Свободная практика →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FREE PRACTICE ================= -->
+  <section class="panel" data-panel="practice">
+    <div class="card">
+      <span class="seg">Тренажёр</span>
+      <h2>Свободная практика — калькулятор сценариев</h2>
+      <p class="lede">Меняйте параметры сделки и смотрите, как меняется схема и сумма. Это тот же движок, что в проверочных кейсах.</p>
+      <div class="calcgrid">
+        <div class="field">
+          <label>Цена объекта, USD</label>
+          <input class="field" type="number" id="p_price" value="200000" min="0" step="1000">
+        </div>
+        <div class="field">
+          <label>Комиссия по сделке, %</label>
+          <select id="p_ah">
+            <option value="0.025">2,5%</option>
+            <option value="0.03">3,0%</option>
+            <option value="0.04">4,0%</option>
+            <option value="0.05" selected>5,0%</option>
+            <option value="0.06">6,0%</option>
+            <option value="0.07">7,0%</option>
+            <option value="0.075">7,5%</option>
+            <option value="0.08">8,0%</option>
+            <option value="0.09">9,0%</option>
+            <option value="0.10">10,0%</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Чей объект</label>
+          <select id="p_owner">
+            <option value="personalPreDI">Мой личный собственник (до ДИ)</option>
+            <option value="myPortfolio">Мой объект из портфеля resale</option>
+            <option value="common" selected>Объект из общего портфеля</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Кто закрывает сделку</label>
+          <select id="p_close">
+            <option value="self" selected>Я закрываю сам(а)</option>
+            <option value="team">Закрывает другой менеджер</option>
+          </select>
+        </div>
+        <div class="field" id="wrap_client">
+          <label>Тип клиента / оборот (если закрываю я)</label>
+          <select id="p_client">
+            <option value="personal">Личный клиент → 50%</option>
+            <option value="c300">Клиент компании, оборот до $300K → 27%</option>
+            <option value="c700">Клиент компании, оборот $300–700K → 32%</option>
+            <option value="c700p">Клиент компании, оборот от $700K → 37%</option>
+          </select>
+        </div>
+        <div class="field" id="wrap_cobroker">
+          <label>Ко-брокерская сделка (50/50 с партнёром)</label>
+          <select id="p_cobroker">
+            <option value="no" selected>Нет</option>
+            <option value="yes">Да — делим комиссию пополам</option>
+          </select>
+        </div>
+      </div>
+      <div class="out" id="p_out"></div>
+      <div class="actions">
+        <button class="btn ghost" onclick="go('block2')">← Назад</button>
+        <div class="spacer"></div>
+        <button class="btn gold" onclick="go('report')">Сформировать карту пробелов →</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= REPORT ================= -->
+  <section class="panel" data-panel="report">
+    <div class="card" id="reportCard">
+      <span class="seg">Сводка</span>
+      <h2 id="rep_title">Результаты</h2>
+      <p class="lede" id="rep_sub"></p>
+      <div class="scorebar" id="rep_scores"></div>
+      <div id="rep_verdict"></div>
+      <h2 id="rep_h_gaps" style="font-size:16px;margin-top:18px">Карта пробелов</h2>
+      <div class="gaps" id="rep_gaps"></div>
+      <h2 id="rep_h_rev1" style="font-size:16px;margin-top:20px">Полный разбор · Блок 1 (задачи и ответственность)</h2>
+      <div id="rep_rev1"></div>
+      <h2 id="rep_h_rev2" style="font-size:16px;margin-top:18px">Полный разбор · Блок 2 (расчёт вознаграждения)</h2>
+      <div id="rep_rev2"></div>
+      <div class="actions">
+        <button class="btn ghost" onclick="window.print()">Печать / в PDF</button>
+        <div class="spacer"></div>
+        <button class="btn" onclick="go('intro')">Пройти заново</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    BOOMERANG Real Estate · Phuket, Thailand · внутренний методический материал ·
+    источники: ДИ Head of Resale &amp; Investment Properties (v4–v5) и BOOMERANG_Мотивация_Head_of_Resale
+  </footer>
+</div>
+
+<script>
+const RATE = 32.95;
+const fmt = n => n.toLocaleString('ru-RU',{maximumFractionDigits:0});
+
+/* ---------- navigation ---------- */
+const PANELS = [
+  {id:'intro',  label:'Старт'},
+  {id:'block1', label:'Обязанности'},
+  {id:'block2', label:'Мотивация'},
+  {id:'practice',label:'Практика'},
+  {id:'report', label:'Итог'},
+];
+const navEl = document.getElementById('nav');
+PANELS.forEach((p,i)=>{
+  const c=document.createElement('div');
+  c.className='chip'; c.dataset.id=p.id;
+  c.innerHTML=`<span class="n">${String(i).padStart(2,'0')}</span>${p.label}`;
+  c.onclick=()=>go(p.id);
+  navEl.appendChild(c);
+});
+function go(id){
+  document.querySelectorAll('.panel').forEach(s=>s.classList.toggle('show',s.dataset.panel===id));
+  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.id===id));
+  window.scrollTo({top:0,behavior:'smooth'});
+  if(id==='report') buildReport();
+}
+function markDone(id){const c=document.querySelector(`.chip[data-id="${id}"]`); if(c)c.classList.add('done');}
+
+/* =========================================================
+   BLOCK 1 — knowledge questions (grounded in the job desc.)
+   ========================================================= */
+const B1 = [
+ {t:"Кому непосредственно подчиняется Head of Resale & Investment Properties?",
+  o:["Менеджерам по продажам","Руководителю отдела продаж (РОП) / собственнику компании","Юридическому отделу","Rental-направлению"],
+  a:1, ref:"ДИ п.1.3 / 6.1 — подчинение РОП / собственнику; своего прямого подчинения пока нет.",
+  topic:"Структура"},
+
+ {t:"Минимальный размер активного пула объектов resale в портфеле (целевой KPI):",
+  o:["≥ 10 объектов","≥ 20 объектов","≥ 30 объектов","≥ 50 объектов"],
+  a:2, ref:"ДИ п.2 и KPI-таблица — поддержание пула ≥ 30 ликвидных объектов.",
+  topic:"KPI"},
+
+ {t:"В какой срок нужно подготовить персональную подборку объектов под запрос клиента?",
+  o:["В течение 1 часа","В течение 24 часов","В течение 3 рабочих дней","Без норматива"],
+  a:1, ref:"ДИ п.4.2 — подборка под инвестиционные цели в течение 24 часов с момента запроса.",
+  topic:"Клиенты и сделки"},
+
+ {t:"Где Head of Resale размещает и регулярно актуализирует объявления по объектам портфеля?",
+  o:["Только на сайте компании","На внешних площадках: FazWaz, DDproperty, Facebook Marketplace, PropertyScout, Telegram-каналы и доски объявлений","Размещение объявлений не входит в обязанности — этим занимается только маркетинг","Объекты публично не размещаются, только рассылка по базе"],
+  a:1, ref:"ДИ п.4.6 — размещение и регулярная актуализация объявлений на FazWaz, DDproperty, Facebook Marketplace, PropertyScout, Telegram-каналах и др. + контроль качества упаковки объекта перед выводом на рынок.",
+  topic:"Продвижение объектов"},
+
+ {t:"Объект засчитывается как ликвидный при выполнении трёх ОБЯЗАТЕЛЬНЫХ критериев. Выберите их формулировки:",
+  o:[
+   "Юридическая чистота (понятная форма владения, без обременений) · диверсификация по районам · инвестиционный потенциал",
+   "Ценовая конкурентоспособность (цена ниже рынка или на уровне, выигрывает у застройщика) · мотивация собственника (заинтересован в срочной продаже) · готовность к продаже (есть фото, актуальная цена, документы в порядке, собственник доступен для показов)",
+   "Диверсификация по ценовому диапазону (entry / mid / premium) · инвестиционный потенциал · юридическая чистота",
+   "Наличие профессиональных фото · известный застройщик · расположение в премиальном районе"],
+  a:1, ref:"Приложение А — обязательные критерии 1+2+3: ценовая конкурентоспособность, мотивация собственника, готовность объекта к продаже. Критерии 4–7 (юр. чистота, диверсификация по районам и цене, инвест-потенциал) — усиливающие факторы.",
+  topic:"Портфель"},
+
+ {t:"Как выделяется рекламный бюджет на продвижение конкретного объекта?",
+  o:["Автоматически, фиксированной суммой на каждый объект","Под конкретный запрос с обоснованием и расчётами, на согласование РОП / собственнику","По решению маркетинга без участия сотрудника","Из личных средств сотрудника"],
+  a:1, ref:"ДИ п.4.6 (★добавлено) — бюджет только под запрос с обоснованием; без обоснования не выделяется.",
+  topic:"Полномочия"},
+
+ {t:"Какие расчёты доходности Head of Resale готовит для инвестиционного клиента?",
+  o:["Только итоговую цену объекта","ROI, cap rate и rental yield (доходность аренды)","Курс THB / USD на дату сделки","Расчёты не готовятся — клиент считает сам"],
+  a:1, ref:"ДИ п.4.3 — инвестиционное сопровождение: подготовка обзоров и расчётов доходности ROI, cap rate, rental yield по запросу клиента; финмодели со сценариями (оптимистичный / базовый / консервативный).",
+  topic:"Инвест-сопровождение"},
+
+ {t:"Отчёт по активному портфелю — периодичность и получатель:",
+  o:["Ежедневно, собственнику","Еженедельно (пн), руководителю / РОП","Ежемесячно, фин. директору","Ежеквартально, маркетингу"],
+  a:1, ref:"ДИ п.7 — отчёт по активному портфелю еженедельно (понедельник), руководитель / РОП.",
+  topic:"Отчётность"},
+
+ {t:"Какое решение по объектам Head of Resale принимает самостоятельно?",
+  o:["Любые сделки без согласования цены","Решение о включении объекта в активный портфель или его отклонении — с обоснованием; при разногласиях эскалация к РОП / собственнику","Изменение комиссии агентства по своему усмотрению","Кадровые решения по менеджерам отдела продаж"],
+  a:1, ref:"ДИ п.5 — самостоятельно принимает решение о включении/отклонении объекта в активный портфель с обоснованием; параметры сделки согласует в пределах, заданных РОП, сверх порога — обязательное согласование.",
+  topic:"Полномочия"},
+
+ {t:"Как разграничена ответственность с РОП?",
+  o:["Head of Resale управляет всей командой продаж","РОП — управление командой, планы и контроль показателей; Head of Resale — экспертное ведение направления и закрытие сделок в своём сегменте","Обе роли полностью дублируют друг друга","Head of Resale подчиняет себе РОП по resale-сделкам"],
+  a:1, ref:"ДИ п.6.3 — РОП ведёт команду и общие показатели; Head of Resale — экспертиза и сделки resale.",
+  topic:"Структура"},
+
+ {t:"Когда сделка засчитывается в текущем месяце для начисления?",
+  o:["В момент устной договорённости с клиентом","При наличии подписанного договора И первого взноса ≥ 100 000 THB","Сразу после показа объекта","Только в конце квартала"],
+  a:1, ref:"Мотивация, условие 2 — подписанный договор И первый взнос ≥ 100 000 THB.",
+  topic:"Правила выплат"},
+
+ {t:"От какой базы рассчитывается бонус? (учтите, что схемы разные)",
+  o:[
+   "Всегда от полной цены объекта",
+   "Всегда от валовой выручки компании за месяц",
+   "Зависит от роли в сделке: брокерский бонус и 20% личного собственника — от комиссии АН (после вычета налогов и расходов); бонус за подготовленный объект (0,25–1%) — от цены объекта",
+   "Всегда от комиссии АН, без учёта расходов"],
+  a:2, ref:"Мотивация: блоки 4 и 5 — % от комиссии АН после вычета расходов; блок 3 (объект подготовлен Вами, закрывает другой менеджер) — 0,25–1% от цены объекта. База зависит от сценария.",
+  topic:"Правила выплат"},
+];
+
+/* =========================================================
+   MOTIVATION ENGINE  (all in USD)
+   ========================================================= */
+function prepTier(ah){ return ah < 0.05 ? 0.0025 : (ah < 0.08 ? 0.005 : 0.01); }
+function prepLabel(ah){ return ah<0.05?"0,25%":(ah<0.08?"0,5%":"1%"); }
+
+/* deal: {price, ah, owner:'personalPreDI'|'myPortfolio'|'common',
+          close:'self'|'team', client, cobroker:bool}
+   client: 'personal' | 'c300'(27) | 'c700'(32) | 'c700p'(37) */
+function clientPct(c){ return c==='personal'?0.5 : c==='c300'?0.27 : c==='c700'?0.32 : 0.37; }
+function clientName(c){ return c==='personal'?"личный клиент (50%)" :
+   c==='c300'?"клиент компании, оборот до $300K (27%)" :
+   c==='c700'?"клиент компании, оборот $300–700K (32%)" : "клиент компании, оборот от $700K (37%)"; }
+
+function compute(d){
+  const ahFull = d.price * d.ah;                  // полная комиссия по сделке
+  const share  = d.cobroker ? ahFull/2 : ahFull;  // комиссия нашего АН (после ко-брокера)
+  const steps = [];
+  let total = 0, scheme = '';
+  steps.push(`Цена объекта ........ $${fmt(d.price)}`);
+  if(d.cobroker){
+    steps.push(`Полная комиссия ${(d.ah*100).toLocaleString('ru-RU')}% .... $${fmt(ahFull)}`);
+    steps.push(`Ко-брокер 50/50 → комиссия АН = $${fmt(share)}  (${(d.ah*50).toLocaleString('ru-RU')}% от цены)`);
+  } else {
+    steps.push(`Комиссия АН ${(d.ah*100).toLocaleString('ru-RU')}% ...... $${fmt(share)}`);
+  }
+
+  if(d.close==='self'){
+    const pct = clientPct(d.client);
+    const broker = share * pct;
+    total += broker;
+    scheme = d.client==='personal' ? '50' : '27';
+    steps.push(`Брокерский бонус: ${clientName(d.client)} → $${fmt(share)} × ${(pct*100).toLocaleString('ru-RU')}% = $${fmt(broker)}`);
+    if(d.owner==='personalPreDI'){
+      const owner = share * 0.20;                  // 20% от комиссии АН
+      total += owner;
+      steps.push(`+ Личный собственник до ДИ: 20% × $${fmt(share)} = $${fmt(owner)}`);
+      scheme = '50+20';
+    }
+  } else { // team closes
+    if(d.owner==='personalPreDI'){
+      total = share * 0.20;
+      scheme = '20';
+      steps.push(`Сделку закрывает другой менеджер. Объект вашего личного собственника (до ДИ)`);
+      steps.push(`→ 20% × $${fmt(share)} = $${fmt(total)}  (схема «личный собственник»)`);
+      steps.push(`Бонус за подготовку объекта (${prepLabel(d.ah)}) НЕ применяется — схемы не суммируются.`);
+    } else if(d.owner==='myPortfolio'){
+      const t = prepTier(d.ah);
+      total = d.price * t;
+      scheme = 'head';
+      steps.push(`Сделку закрывает другой менеджер. Ваш объект из портфеля resale`);
+      steps.push(`→ комиссия ${(d.ah*100).toLocaleString('ru-RU')}% → ставка ${prepLabel(d.ah)} от цены`);
+      steps.push(`→ ${prepLabel(d.ah)} × $${fmt(d.price)} = $${fmt(total)}`);
+    } else {
+      total = 0; scheme='0';
+      steps.push(`Объект из общего портфеля, сделку закрывает другой менеджер → вашего бонуса нет.`);
+    }
+  }
+  return {ahComm:ahFull, share, total, steps, scheme};
+}
+
+/* =========================================================
+   BLOCK 2 — scenario cases (drawn from the matrix sheet)
+   ========================================================= */
+const B2 = [
+ {label:"Мой собственник (до ДИ) + мой объект + мой личный клиент, закрываю сам(а)",
+  d:{price:185000, ah:0.05, owner:'personalPreDI', close:'self', client:'personal', cobroker:false},
+  topic:"Стыковка ролей"},
+ {label:"Мой собственник (до ДИ) + клиент компании, закрываю сам(а)",
+  d:{price:420000, ah:0.05, owner:'personalPreDI', close:'self', client:'c700', cobroker:false},
+  topic:"Стыковка ролей"},
+ {label:"Мой собственник (до ДИ), но сделку закрывает другой менеджер",
+  d:{price:260000, ah:0.08, owner:'personalPreDI', close:'team', cobroker:false},
+  topic:"Пассивная роль"},
+ {label:"Объект из общего портфеля + мой личный клиент, закрываю сам(а)",
+  d:{price:150000, ah:0.08, owner:'common', close:'self', client:'personal', cobroker:false},
+  topic:"Личный клиент"},
+ {label:"Объект из общего портфеля + клиент компании, закрываю сам(а)",
+  d:{price:220000, ah:0.10, owner:'common', close:'self', client:'c300', cobroker:false},
+  topic:"Клиент компании"},
+ {label:"Мой объект из портфеля, сделку закрывает другой менеджер",
+  d:{price:240000, ah:0.08, owner:'myPortfolio', close:'team', cobroker:false},
+  topic:"Подготовка объекта"},
+ {label:"Моя вилла премиум, сделку закрывает другой менеджер",
+  d:{price:1250000, ah:0.025, owner:'myPortfolio', close:'team', cobroker:false},
+  topic:"Подготовка объекта"},
+ {label:"Ко-брокерская сделка 50/50, мой объект из портфеля resale + мой личный клиент, закрываю сам(а)",
+  d:{price:230000, ah:0.05, owner:'myPortfolio', close:'self', client:'personal', cobroker:true},
+  topic:"Ко-брокер"},
+ {label:"Ко-брокерская сделка 50/50 + клиент компании, закрываю сам(а)",
+  d:{price:540000, ah:0.05, owner:'common', close:'self', client:'c700', cobroker:true},
+  topic:"Ко-брокер"},
+ {label:"Мой собственник (до ДИ), комиссия АН 10%, сделку закрывает другой менеджер",
+  d:{price:275000, ah:0.10, owner:'personalPreDI', close:'team', cobroker:false},
+  topic:"Не суммируется",
+  trap:"Применяется только схема личного собственника — 20% от комиссии АН ($5 500). Бонус за подготовленный объект (1% = $2 750) при этом НЕ начисляется: при таком сочетании ролей действует одна схема, не обе."},
+];
+
+/* ---------- state ---------- */
+const state = {
+  b1:{}, // idx -> {chosen, correct}
+  b2:{}, // idx -> {ok, given, expected}
+};
+
+/* ---------- render BLOCK 1 ---------- */
+function renderB1(){
+  const box=document.getElementById('b1q'); box.innerHTML='';
+  B1.forEach((q,i)=>{
+    const card=document.createElement('div'); card.className='q';
+    card.innerHTML=`<div class="qhead"><div class="qnum">${i+1}</div><div class="qtext">${q.t}</div></div>`;
+    const opts=document.createElement('div'); opts.className='opts';
+    q.o.forEach((txt,j)=>{
+      const lab=document.createElement('label'); lab.className='opt';
+      lab.innerHTML=`<input type="radio" name="b1_${i}" value="${j}"><span>${txt}</span>`;
+      lab.querySelector('input').addEventListener('change',()=>{
+        opts.querySelectorAll('.opt').forEach(o=>o.classList.remove('sel'));
+        lab.classList.add('sel');
+      });
+      opts.appendChild(lab);
+    });
+    const btn=document.createElement('button'); btn.className='btn ghost'; btn.style.marginTop='11px';
+    btn.textContent='Записать ответ';
+    const fb=document.createElement('div'); fb.className='fb';
+    btn.onclick=()=>{
+      const sel=opts.querySelector('input:checked');
+      if(!sel){fb.className='fb bad show';fb.innerHTML='Выберите вариант.';return;}
+      const chosen=+sel.value, correct=(chosen===q.a);
+      opts.querySelectorAll('.opt').forEach(o=>o.classList.add('locked'));
+      btn.disabled=true; btn.textContent='Ответ записан ✓';
+      fb.className='fb saved show';
+      fb.innerHTML='Ответ записан. Правильный вариант и разбор — в отчёте в конце.';
+      state.b1[i]={chosen,correct,topic:q.topic,q:q.t};
+      updB1count();
+    };
+    card.appendChild(opts); card.appendChild(btn); card.appendChild(fb);
+    box.appendChild(card);
+  });
+}
+function updB1count(){
+  const n=Object.keys(state.b1).length;
+  document.getElementById('b1count').textContent=`Отвечено ${n} из ${B1.length}`;
+  if(n===B1.length) markDone('block1');
+}
+
+/* ---------- render BLOCK 2 ---------- */
+function renderB2(){
+  const box=document.getElementById('b2q'); box.innerHTML='';
+  B2.forEach((sc,i)=>{
+    const r=compute(sc.d);
+    const card=document.createElement('div'); card.className='q';
+    card.innerHTML=`<div class="qhead"><div class="qnum">${i+1}</div><div class="qtext">${sc.label}</div></div>`;
+    const scn=document.createElement('div'); scn.className='scn';
+    scn.innerHTML=
+      `<b>Цена:</b> $${fmt(sc.d.price)} &nbsp;·&nbsp; `+
+      (sc.d.cobroker
+        ? `<b>Комиссия по сделке:</b> ${(sc.d.ah*100).toLocaleString('ru-RU')}% → <b>АН после ко-брокера:</b> ${(sc.d.ah*50).toLocaleString('ru-RU')}%`
+        : `<b>Комиссия АН:</b> ${(sc.d.ah*100).toLocaleString('ru-RU')}%`)+
+      `&nbsp;·&nbsp; <b>Кто закрывает:</b> ${sc.d.close==='self'?'я сам(а)':'другой менеджер'}`+
+      (sc.d.close==='self'?`<br><b>Клиент:</b> ${clientName(sc.d.client)}`:'')+
+      (sc.d.owner==='personalPreDI'?`<br><b>Объект:</b> мой личный собственник (до ДИ)`:
+       sc.d.owner==='myPortfolio'?`<br><b>Объект:</b> мой объект из портфеля resale`:
+       `<br><b>Объект:</b> из общего портфеля`)+
+      (sc.d.cobroker?`<br><b>Ко-брокер:</b> да, 50/50 (комиссия делится пополам)`:'');
+    card.appendChild(scn);
+
+    const row=document.createElement('div'); row.className='numrow';
+    row.innerHTML=`<label>Бонус сотрудника:</label>`;
+    const inp=document.createElement('input'); inp.className='num'; inp.type='number'; inp.placeholder='сумма в USD';
+    const unit=document.createElement('span'); unit.className='unit'; unit.textContent='USD';
+    const btn=document.createElement('button'); btn.className='btn ghost'; btn.textContent='Записать ответ';
+    row.appendChild(inp); row.appendChild(unit); row.appendChild(btn);
+    const fb=document.createElement('div'); fb.className='fb';
+
+    btn.onclick=()=>{
+      const v=parseFloat(inp.value);
+      if(isNaN(v)){fb.className='fb bad show';fb.innerHTML='Введите число.';return;}
+      const ok=Math.abs(v-r.total)<=1;
+      inp.disabled=true; btn.disabled=true; btn.textContent='Ответ записан ✓';
+      fb.className='fb saved show';
+      fb.innerHTML='Ответ записан. Разбор расчёта и правильная сумма — в отчёте в конце.';
+      state.b2[i]={ok,given:v,expected:r.total,topic:sc.topic,label:sc.label};
+      updB2count();
+    };
+    card.appendChild(row); card.appendChild(fb);
+    box.appendChild(card);
+  });
+}
+function updB2count(){
+  const n=Object.keys(state.b2).length;
+  document.getElementById('b2count').textContent=`Решено ${n} из ${B2.length}`;
+  if(n===B2.length) markDone('block2');
+}
+
+/* ---------- FREE PRACTICE ---------- */
+function practice(){
+  const price=parseFloat(document.getElementById('p_price').value)||0;
+  const ah=parseFloat(document.getElementById('p_ah').value);
+  const owner=document.getElementById('p_owner').value;
+  const close=document.getElementById('p_close').value;
+  const client=document.getElementById('p_client').value;
+  const cobroker=document.getElementById('p_cobroker').value==='yes';
+  // show/hide client selector
+  document.getElementById('wrap_client').style.opacity = close==='self'?1:0.4;
+  document.getElementById('p_client').disabled = close!=='self';
+  const r=compute({price,ah,owner,close,client,cobroker});
+  const tagMap={'50':['s50','Личный клиент 50%'],'27':['s27','Клиент компании 27–37%'],
+    '50+20':['s50','50% + 20% собственник'],'20':['s20','Личный собственник 20%'],
+    'head':['shead','Head of Resale 0,25–1%'],'0':['s27','Бонуса нет']};
+  const tg=tagMap[r.scheme]||['s27',''];
+  document.getElementById('p_out').innerHTML=
+    `<div class="big">$${fmt(r.total)} <span class="thb">≈ ${fmt(r.total*RATE)} THB</span>`+
+    `<span class="tag ${tg[0]}">${tg[1]}</span></div>`+
+    `<div class="steps">${r.steps.join('\n')}</div>`+
+    `<div class="steps" style="border-top:none;padding-top:6px;color:#9fb0c8;font-size:12px">До вычета расходной части (налоги, сборы, опер. расходы) и без поправки на курс — справочно.</div>`;
+}
+['p_price','p_ah','p_owner','p_close','p_client','p_cobroker'].forEach(id=>{
+  document.getElementById(id).addEventListener('input',practice);
+  document.getElementById(id).addEventListener('change',practice);
+});
+
+/* ---------- REPORT ---------- */
+function buildReport(){
+  const emp=document.getElementById('emp').value.trim()||'—';
+  const d=new Date().toLocaleDateString('ru-RU');
+  document.getElementById('rep_title').textContent=`Итог: ${emp}`;
+  document.getElementById('rep_sub').textContent=`Дата: ${d} · Роль: Head of Resale & Investment Properties`;
+
+  const b1arr=Object.values(state.b1), b2arr=Object.values(state.b2);
+  const b1ok=b1arr.filter(x=>x.correct).length;
+  const b2ok=b2arr.filter(x=>x.ok).length;
+  const b1tot=B1.length, b2tot=B2.length;
+  const totalOk=b1ok+b2ok, totalTot=b1tot+b2tot;
+  const totAnswered=b1arr.length+b2arr.length;
+  const pct=totalTot?Math.round(totalOk/totalTot*100):0;
+
+  // gate: ответы и разбор открываются только когда отвечены ВСЕ вопросы, без пропусков
+  const elScores=document.getElementById('rep_scores');
+  const elHGaps=document.getElementById('rep_h_gaps'), elGaps=document.getElementById('rep_gaps');
+  const elHRev1=document.getElementById('rep_h_rev1'), elRev1=document.getElementById('rep_rev1');
+  const elHRev2=document.getElementById('rep_h_rev2'), elRev2=document.getElementById('rep_rev2');
+  const resultEls=[elScores,elHGaps,elGaps,elHRev1,elRev1,elHRev2,elRev2];
+  if(totAnswered<totalTot){
+    resultEls.forEach(el=>el.style.display='none');
+    const miss1=[...Array(B1.length).keys()].filter(i=>state.b1[i]===undefined).map(i=>i+1);
+    const miss2=[...Array(B2.length).keys()].filter(i=>state.b2[i]===undefined).map(i=>i+1);
+    document.getElementById('rep_verdict').innerHTML=
+      `<div class="verdict warn">🔒 Правильные ответы и разбор откроются, когда вы ответите на все вопросы — без пропусков.<br>`+
+      `Осталось ответить: <b>${totalTot-totAnswered}</b>.<br>`+
+      `Блок 1: ${miss1.length?('вопросы № '+miss1.join(', ')):'✓ готово'}<br>`+
+      `Блок 2: ${miss2.length?('вопросы № '+miss2.join(', ')):'✓ готово'}</div>`;
+    return;
+  }
+  resultEls.forEach(el=>el.style.display='');
+
+  const sc=document.getElementById('rep_scores');
+  const mk=(lab,ok,tot)=>{const p=tot?Math.round(ok/tot*100):0;return`
+    <div class="score"><div class="lab">${lab}</div>
+    <div class="val">${ok}<small>/${tot}</small></div>
+    <div class="meter"><span style="width:${p}%"></span></div></div>`;};
+  sc.innerHTML=mk('Блок 1 · Обязанности',b1ok,b1tot)+mk('Блок 2 · Мотивация',b2ok,b2tot)+
+    `<div class="score"><div class="lab">Итог</div><div class="val">${pct}<small>%</small></div>
+     <div class="meter"><span style="width:${pct}%"></span></div></div>`;
+
+  let vcls,vtxt;
+  if(totAnswered<totalTot){
+    vcls='warn'; vtxt=`Пройдено не до конца: отвечено ${totAnswered} из ${totalTot}. Чтобы увидеть полную картину, завершите оба блока.`;
+  } else if(pct>=90 && b2ok>=8){
+    vcls='pass'; vtxt='Задачи, зона ответственности и расчёт вознаграждения — понятны и считаются уверенно. Рекомендация: закреплять ежемесячным разбором одного реального кейса с РОП.';
+  } else if(pct>=70){
+    vcls='warn'; vtxt='В целом понятно, но по части сценариев есть пробелы — см. карту ниже. Стоит вернуться к ним и пересчитать через пару недель.';
+  } else {
+    vcls='fail'; vtxt='Понимание пока неустойчивое. По отмеченным пунктам нужен разбор с РОП и повторный проход.';
+  }
+  document.getElementById('rep_verdict').innerHTML=`<div class="verdict ${vcls}">${vtxt}</div>`;
+
+  // gaps
+  const gaps=document.getElementById('rep_gaps'); gaps.innerHTML='';
+  const wrong1=b1arr.filter(x=>!x.correct);
+  const wrong2=b2arr.filter(x=>!x.ok);
+  if(wrong1.length===0&&wrong2.length===0&&totAnswered===totalTot){
+    gaps.innerHTML='<div class="verdict pass">Ошибок нет. Все ответы верны.</div>';
+  }
+  wrong1.forEach(x=>{
+    const el=document.createElement('div'); el.className='gap';
+    el.innerHTML=`<div class="where">Блок 1 · ${x.topic}</div>${x.q}`;
+    gaps.appendChild(el);
+  });
+  wrong2.forEach(x=>{
+    const el=document.createElement('div'); el.className='gap';
+    el.innerHTML=`<div class="where">Блок 2 · ${x.topic}</div>${x.label}<br>`+
+      `<span style="font-family:var(--mono);font-size:12.5px;color:var(--muted)">`+
+      `ответ $${fmt(x.given)} · верно $${fmt(x.expected)}</span>`;
+    gaps.appendChild(el);
+  });
+  // unanswered
+  const miss=(totalTot-totAnswered);
+  if(miss>0){
+    const el=document.createElement('div'); el.className='gap';
+    el.style.borderLeftColor='var(--warn)';
+    el.innerHTML=`<div class="where" style="color:var(--warn)">Не отвечено</div>Осталось вопросов без ответа: ${miss}.`;
+    gaps.appendChild(el);
+  }
+
+  // full review — Block 1
+  document.getElementById('rep_rev1').innerHTML = B1.map((q,i)=>{
+    const st=state.b1[i]; const answered=st!==undefined; const correct=answered&&st.correct;
+    let h=`<div class="rev ${answered?(correct?'good':'bad'):'na'}">`;
+    h+=`<div class="qtext2">${i+1}. ${q.t}</div>`;
+    if(answered){
+      h+=`<div class="ans ${correct?'g':'r'}">Ваш ответ: ${q.o[st.chosen]}</div>`;
+      if(!correct) h+=`<div class="ans g">Правильный ответ: ${q.o[q.a]}</div>`;
+    } else {
+      h+=`<div class="ans na">Без ответа. Правильный ответ: ${q.o[q.a]}</div>`;
+    }
+    h+=`<div class="refrev">📎 ${q.ref}</div></div>`;
+    return h;
+  }).join('');
+
+  // full review — Block 2
+  document.getElementById('rep_rev2').innerHTML = B2.map((sc,i)=>{
+    const st=state.b2[i]; const r=compute(sc.d); const answered=st!==undefined; const ok=answered&&st.ok;
+    let h=`<div class="rev ${answered?(ok?'good':'bad'):'na'}">`;
+    h+=`<div class="qtext2">${i+1}. ${sc.label}</div>`;
+    if(answered){
+      h+=`<div class="ans ${ok?'g':'r'}">Ваш ответ: $${fmt(st.given)} · Правильно: <b>$${fmt(r.total)}</b> (${fmt(r.total*RATE)} THB)</div>`;
+    } else {
+      h+=`<div class="ans na">Без ответа · Правильно: <b>$${fmt(r.total)}</b> (${fmt(r.total*RATE)} THB)</div>`;
+    }
+    h+=`<div class="calc">${r.steps.join('\n')}\n──────────────\nИТОГО: $${fmt(r.total)} = ${fmt(r.total*RATE)} THB</div>`;
+    h+=`<div class="refrev">Суммы до вычета расходов и без поправки на курс.</div>`;
+    if(sc.trap) h+=`<div class="refrev">⚠️ ${sc.trap}</div>`;
+    h+=`</div>`;
+    return h;
+  }).join('');
+
+  markDone('report');
+}
+
+/* ---------- init ---------- */
+renderB1(); renderB2(); practice();
+go('intro');
+</script>
+</body>
+</html>
